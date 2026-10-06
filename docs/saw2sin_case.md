@@ -67,6 +67,7 @@ flowchart LR
 | 环境自检 | `E:\anaconda\envs\ti-npu\python.exe E:\desk\ti-npu\check_ti_npu_env.py` |
 | 编译器变量 | `C2000_CG_ROOT`（用户级已持久设置；运行中的 VS Code 需重启后新终端才会继承）|
 | 工具链源码 | `E:\desk\ti-npu\tinyml-tensorlab-main\tinyml-tensorlab-main\` |
+| 环境搭建全流程 | 见 `docs/env_setup.md`（从零搭建步骤 / 逐项自检 / 环境类踩坑清单）|
 
 ---
 

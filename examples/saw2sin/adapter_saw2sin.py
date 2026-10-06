@@ -54,6 +54,7 @@ def _window_pack(s):
     n = (s.shape[0] // FRAME) * FRAME
     return s[:n].reshape(-1, FRAME, 1).permute(0, 2, 1).unsqueeze(3).contiguous()
 
+#这里开始要加入
 
 def get_model():
     mlp = _MLP()
@@ -85,13 +86,6 @@ def get_example_input():
     return torch.rand(1, 1, FRAME, 1)
 
 
-def sample_batch(batch_size):
-    """QAT 微调批次: 随机窗锯齿 (x) -> 正弦 (y)."""
-    t = torch.rand(batch_size, FRAME, 1)
-    s = 2.0 * t - 1.0
-    y = torch.sin(2.0 * np.pi * t)
-    return (s.permute(0, 2, 1).unsqueeze(3).contiguous(),
-            y.permute(0, 2, 1).unsqueeze(3).contiguous())
 
 
 def get_eval_inputs(num_samples):
@@ -112,3 +106,13 @@ def evaluate(predict):
     y = np.concatenate(outs)
     err = np.abs(y - y_true[:y.size])
     return {"max_err": float(err.max()), "mean_err": float(err.mean())}
+
+#这里开始结束
+
+def sample_batch(batch_size):
+    """QAT 微调批次: 随机窗锯齿 (x) -> 正弦 (y)."""
+    t = torch.rand(batch_size, FRAME, 1)
+    s = 2.0 * t - 1.0
+    y = torch.sin(2.0 * np.pi * t)
+    return (s.permute(0, 2, 1).unsqueeze(3).contiguous(),
+            y.permute(0, 2, 1).unsqueeze(3).contiguous())

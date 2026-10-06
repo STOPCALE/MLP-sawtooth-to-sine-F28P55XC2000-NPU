@@ -121,6 +121,8 @@ deploy/
 | 交叉编译器 | C2000 CGT（自动探测；也可在 job 里显式指定）|
 | 参考例程 | C2000Ware `libraries\ai\examples\arc_fault`（集成时对照）|
 
+**从零搭建步骤 / 逐项自检 / 环境类踩坑清单** → [`docs/env_setup.md`](docs/env_setup.md)
+
 ---
 
 ## 6. 已知限制
@@ -139,5 +141,6 @@ deploy/
 torch2tinpu/            工具包 (check/convert/compile/deploy/all)
 examples/saw2sin/       可运行示例 (adapter + job)，产物输出到 out/
 docs/saw2sin_case.md    saw2sin 案例完整记录 (含板端实测 637.6µs/次)
+docs/env_setup.md       环境搭建 / 自检 / 环境类踩坑清单
 case_saw2sin/           案例归档 (原始脚本 / 编译产物 / 对照实验)
 ```
