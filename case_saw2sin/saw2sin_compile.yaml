@@ -1,0 +1,35 @@
+# saw2sin -> F28P55 NPU compile config (BYOM "compile only" flow)
+#
+# Purpose: compile the TI-QAT int8 ONNX (from saw2sin_tinpu_qat.py, Stage A)
+#          into F28P55 NPU artifacts: mod.a / tvmgen_default.h
+#
+# Run (from this directory):
+#   E:\anaconda\envs\ti-npu\python.exe -m tinyml_modelmaker.run_tinyml_modelmaker saw2sin_compile.yaml
+#
+# NOTE: keep this file pure ASCII - the TI script opens it with the OS default
+#       encoding (GBK on Chinese Windows), so non-ASCII characters would crash it.
+
+common:
+  target_module: 'timeseries'
+  task_type: 'generic_timeseries_regression'
+  target_device: 'F28P55'
+  run_name: 'saw2sin_tinpu'
+
+dataset:
+  enable: False
+  dataset_name: saw2sin
+
+data_processing_feature_extraction:
+  feature_extraction_name: None
+
+training:
+  enable: False
+  model_name: saw2sin
+  quantization: 2   # 2 = TINPU QAT int8 model (required to keep 'type=hard' NPU compile;
+                    # the flow downgrades hard->soft when this is not 2)
+
+testing: {}
+
+compilation:
+  enable: True
+  model_path: 'E:\desk\ti-npu\saw2sin_npu\case_saw2sin\saw2sin_tinpu_int8.onnx'

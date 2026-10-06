@@ -1,0 +1,89 @@
+   INFO: root                : TinyVerse Toolchain Version: 01_05_00
+   INFO: root                : Script: ..\tinyml-tensorlab-main\tinyml-tensorlab-main\tinyml-tinyverse\tinyml_tinyverse\references\common\compilation.py
+   INFO: root                : Target: c, ti-npu type=hard skip_normalize=false output_int=false
+   INFO: root                : Compilation settings - skip_normalize: False ('false' for float models, 'true' otherwise)
+   INFO: root                : Compilation settings - output_int: False ('false' for float models, 'true/false' otherwise)
+   INFO: root                : Compilation settings - ti-npu type: hard ('soft' for float models/generic quantized models, 'soft/hard' otherwise)
+   INFO: root.gen_artifacts  : Changing directory to: E:\desk\ti-npu\saw2sin_npu\data\projects\refcase\run\ref_e2e_model\compilation
+   INFO: root.gen_artifacts  : Calling TVM to generate artifacts: 
+WARNING: ti_mcu_nnc          : AVGPOOL layer NOT offloaded to TI-NPU
+WARNING: ti_mcu_nnc          : Global AVGPOOL layer config:8-bit input [1, 1, 16], 8-bit output [16]
+WARNING: ti_mcu_nnc          : Current Global AVGPOOL implementation only supports certain layer configs. Please follow TI Neural Network Compiler for MCUs User's Guide to check supported layer configs and request support for your layer config.
+   INFO: ti_mcu_nnc          :  ============================================================
+   INFO: ti_mcu_nnc          :  TI NPU Offloading Report
+   INFO: ti_mcu_nnc          :  ============================================================
+   INFO: ti_mcu_nnc          :  
+   INFO: ti_mcu_nnc          :  LAYER/OPERATOR COUNT SUMMARY
+   INFO: ti_mcu_nnc          :  ============================================================
+   INFO: ti_mcu_nnc          : 
+   INFO: ti_mcu_nnc          :  Layer Patterns Offloaded
+   INFO: ti_mcu_nnc          :  ------------------------------------------------------------
+   INFO: ti_mcu_nnc          :  Layer Pattern                                    Count     
+   INFO: ti_mcu_nnc          :  ------------------------------------------------------------
+   INFO: ti_mcu_nnc          :  FCONV                                            1         
+   INFO: ti_mcu_nnc          :  GCONV                                            3         
+   INFO: ti_mcu_nnc          :  FC                                               2         
+   INFO: ti_mcu_nnc          : 
+   INFO: ti_mcu_nnc          :  Operators not Offloaded
+   INFO: ti_mcu_nnc          :  ------------------------------------------------------------
+   INFO: ti_mcu_nnc          :  Operator                                         Count     
+   INFO: ti_mcu_nnc          :  ------------------------------------------------------------
+   INFO: ti_mcu_nnc          :  add                                              2         
+   INFO: ti_mcu_nnc          :  multiply                                         4         
+   INFO: ti_mcu_nnc          :  floor                                            1         
+   INFO: ti_mcu_nnc          :  clip                                             2         
+   INFO: ti_mcu_nnc          :  cast                                             3         
+   INFO: ti_mcu_nnc          :  reshape                                          1         
+   INFO: ti_mcu_nnc          :  nn.pad                                           1         
+   INFO: ti_mcu_nnc          :  sum                                              1         
+   INFO: ti_mcu_nnc          :  right_shift                                      1         
+   INFO: ti_mcu_nnc          :  qnn.dequantize                                   1         
+   INFO: ti_mcu_nnc          : 
+   INFO: ti_mcu_nnc          :  ============================================================
+   INFO: ti_mcu_nnc          : 
+   INFO: ti_mcu_nnc          : 
+   INFO: ti_mcu_nnc          :  MODEL PARTITION - TOPOLOGICAL VIEW
+   INFO: ti_mcu_nnc          :  ============================================================
+   INFO: ti_mcu_nnc          :  Layer/Operator                                   Offloaded 
+   INFO: ti_mcu_nnc          :  ------------------------------------------------------------
+   INFO: ti_mcu_nnc          :  Input
+   INFO: ti_mcu_nnc          :  add                                              [ ]       
+   INFO: ti_mcu_nnc          :  multiply                                         [ ]       
+   INFO: ti_mcu_nnc          :  multiply                                         [ ]       
+   INFO: ti_mcu_nnc          :  floor                                            [ ]       
+   INFO: ti_mcu_nnc          :  clip                                             [ ]       
+   INFO: ti_mcu_nnc          :  cast                                             [ ]       
+   INFO: ti_mcu_nnc          :  reshape                                          [ ]       
+   INFO: ti_mcu_nnc          :  nn.pad                                           [ ]       
+   INFO: ti_mcu_nnc          :  FCONV                                            [X]       
+   INFO: ti_mcu_nnc          :  GCONV                                            [X]       
+   INFO: ti_mcu_nnc          :  GCONV                                            [X]       
+   INFO: ti_mcu_nnc          :  GCONV                                            [X]       
+   INFO: ti_mcu_nnc          :  cast                                             [ ]       
+   INFO: ti_mcu_nnc          :  sum                                              [ ]       
+   INFO: ti_mcu_nnc          :  add                                              [ ]       
+   INFO: ti_mcu_nnc          :  multiply                                         [ ]       
+   INFO: ti_mcu_nnc          :  right_shift                                      [ ]       
+   INFO: ti_mcu_nnc          :  clip                                             [ ]       
+   INFO: ti_mcu_nnc          :  cast                                             [ ]       
+   INFO: ti_mcu_nnc          :  FC                                               [X]       
+   INFO: ti_mcu_nnc          :  FC                                               [X]       
+   INFO: ti_mcu_nnc          :  qnn.dequantize                                   [ ]       
+   INFO: ti_mcu_nnc          :  multiply                                         [ ]       
+   INFO: ti_mcu_nnc          :  Output
+   INFO: ti_mcu_nnc          :  ============================================================
+   INFO: ti_mcu_nnc          : 
+   INFO: ti_mcu_nnc          :  ============================================================
+   INFO: ti_mcu_nnc          :  TI Model Library Memory Usage (mod.a)
+   INFO: ti_mcu_nnc          :  ============================================================
+   INFO: ti_mcu_nnc          :  Code:                      1241 bytes (    1.21 KB)
+   INFO: ti_mcu_nnc          :  RO Data:                   1928 bytes (    1.88 KB)
+   INFO: ti_mcu_nnc          :  RW Data:                    254 bytes (    0.25 KB)
+   INFO: ti_mcu_nnc          :  Total:                     3423 bytes (    3.34 KB)
+   INFO: ti_mcu_nnc          :  ============================================================
+   INFO: TVMC                :  TI memory calculation completed successfully
+   INFO: root.gen_artifacts  : Changing directory back to: E:\desk\ti-npu\saw2sin_npu
+   INFO: root.remove_intermittent_files: Removing intermittent files from: E:\desk\ti-npu\saw2sin_npu\data\projects\refcase\run\ref_e2e_model\compilation
+   INFO: tinyml_modelmaker.ai_modules.timeseries.runner: Compiled model is at: E:\desk\ti-npu\saw2sin_npu\data\projects\refcase\run\ref_e2e_model\compilation
+
+SUCCESS: ModelMaker - Compilation completed.

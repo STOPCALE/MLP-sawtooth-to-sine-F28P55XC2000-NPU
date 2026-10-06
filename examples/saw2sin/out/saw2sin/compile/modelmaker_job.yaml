@@ -1,0 +1,18 @@
+common:
+  target_module: timeseries
+  task_type: generic_timeseries_regression
+  target_device: F28P55
+  run_name: saw2sin
+dataset:
+  enable: false
+  dataset_name: saw2sin
+data_processing_feature_extraction:
+  feature_extraction_name: None
+training:
+  enable: false
+  model_name: saw2sin
+  quantization: 2
+testing: {}
+compilation:
+  enable: true
+  model_path: E:\desk\ti-npu\saw2sin_npu\examples\saw2sin\out\saw2sin\saw2sin_int8.onnx

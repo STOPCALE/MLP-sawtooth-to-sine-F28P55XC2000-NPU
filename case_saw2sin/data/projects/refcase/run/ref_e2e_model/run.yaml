@@ -1,0 +1,181 @@
+common:
+  download_path: .\data\downloads
+  generic_model: false
+  project_path: E:\desk\ti-npu\saw2sin_npu\data\projects\refcase
+  project_run_path: E:\desk\ti-npu\saw2sin_npu\data\projects\refcase\run\ref_e2e_model
+  projects_path: E:\desk\ti-npu\saw2sin_npu\data\projects
+  run_name: ref_e2e_model
+  target_device: F28P55
+  target_module: timeseries
+  task_category: timeseries_regression
+  task_type: generic_timeseries_regression
+compilation:
+  compilation_path: E:\desk\ti-npu\saw2sin_npu\data\projects\refcase\run\ref_e2e_model\compilation
+  compile_output_path: null
+  compile_preset_name: null
+  cross_compiler: E:\ccs\ccs\tools\compiler\ti-cgt-c2000_25.11.1.LTS\bin\cl2000
+  cross_compiler_options: --abi=eabi -O3 --opt_for_speed=5 --c99 -v28 -ml -mt --gen_func_subsections
+    --float_support=fpu32 -IE:\ccs\ccs\tools\compiler\ti-cgt-c2000_25.11.1.LTS\include
+    -I.
+  enable: true
+  keep_libc_files: false
+  log_file_path: E:\desk\ti-npu\saw2sin_npu\data\projects\refcase\run\ref_e2e_model\compilation\run.log
+  log_summary_regex: null
+  model_compiled_path: E:\desk\ti-npu\saw2sin_npu\data\projects\refcase\run\ref_e2e_model\compilation\artifacts
+  model_packaged_path: E:\desk\ti-npu\saw2sin_npu\data\projects\refcase\run\ref_e2e_model\compilation\ref_e2e_model_F28P55.zip
+  model_path: E:\desk\ti-npu\saw2sin_npu\ref_regr2k_model.onnx
+  model_visualization_path: E:\desk\ti-npu\saw2sin_npu\data\projects\refcase\run\ref_e2e_model\compilation\artifacts\artifacts\tempDir\runtimes_visualization.svg
+  output_tensors_path: E:\desk\ti-npu\saw2sin_npu\data\projects\refcase\run\ref_e2e_model\compilation\artifacts\outputs
+  properties:
+  - default: default_preset
+    enum:
+    - label: Default best
+      tooltip: Default Inference Mode
+      value: default_preset
+    label: Compilation Preset
+    name: compile_preset_name
+    type: enum
+  summary_file_path: E:\desk\ti-npu\saw2sin_npu\data\projects\refcase\run\ref_e2e_model\compilation\artifacts\summary.yaml
+  target: c, ti-npu type=hard skip_normalize=false output_int=false
+  target_c_mcpu: c28
+  tspa_license_path: E:\desk\ti-npu\tinyml-tensorlab-main\tinyml-tensorlab-main\tinyml-modelmaker\tinyml_modelmaker\ai_modules\common\compilation\LICENSE.txt
+data_processing_feature_extraction:
+  analysis_bandwidth: 1
+  chunk_size: 1
+  data_proc_transforms: []
+  dc_remove: true
+  dont_train_just_feat_ext: false
+  feat_ext_store_dir: null
+  feat_ext_transform: []
+  feature_extraction_name: None
+  feature_size_per_frame: null
+  fft_size: 1
+  forecast_horizon: 1
+  frame_size: 1
+  frame_skip: 1
+  gain_variations: null
+  gof_test: false
+  log_base: null
+  log_mul: null
+  log_threshold: null
+  min_bin: 1
+  new_sr: 1
+  nn_for_feature_extraction: false
+  normalize_bin: 0
+  num_frame_concat: 1
+  offset: 0
+  q15_scale_factor: 4
+  resampling_factor: 1
+  sampling_rate: 1
+  scale: null
+  stacking: 2D1
+  store_feat_ext_data: false
+  stride_size: 0.01
+  target_variables: []
+  variables: 1
+  window_count: 1
+dataset:
+  annotation_dir: annotations
+  annotation_format: univ_ts_json
+  annotation_path_splits: []
+  annotation_prefix: instances
+  data_dir: files
+  data_path_splits: []
+  dataset_name: refcase
+  dataset_path: E:\desk\ti-npu\saw2sin_npu\data\projects\refcase\dataset
+  enable: false
+  extract_path: null
+  input_annotation_path: null
+  input_data_path: null
+  max_num_files: 10000
+  split_factor:
+  - 0.6
+  - 0.3
+  - 0.1
+  split_names:
+  - train
+  - val
+  - test
+  split_type: amongst_files
+download: null
+testing:
+  device_inference: false
+  enable: true
+  model_path: null
+  skip_train: false
+  test_data: null
+training:
+  augment_config: null
+  auto_quantization: true
+  autoquant_tolerance_anomaly: 2.0
+  autoquant_tolerance_classification: 0.05
+  autoquant_tolerance_forecasting: 2.0
+  autoquant_tolerance_regression: 0.05
+  batch_size: 8
+  compile_model: 0
+  dataset_loader: GenericTSDataset
+  dataset_path: null
+  distributed: true
+  dual_op: false
+  early_stopping: true
+  early_stopping_min_delta: 0.0
+  early_stopping_patience: 5
+  enable: false
+  export_samples_per_class:
+  - 10
+  - 10
+  - 10
+  file_level_classification_log_path: null
+  lambda_reg: 0
+  learning_rate: 0.002
+  load_saved_model: null
+  log_file_path: null
+  log_summary_regex: null
+  lr_scheduler: cosineannealinglr
+  model_config: null
+  model_name: reftest
+  model_packaged_path: E:\desk\ti-npu\saw2sin_npu\data\projects\refcase\run\ref_e2e_model\training\base\ref_e2e_model.zip
+  model_spec: null
+  model_training_id: null
+  nas_enabled: false
+  nas_epochs: 10
+  nas_fanout_concat: 4
+  nas_init_channel_multiplier: 3
+  nas_init_channels: 1
+  nas_layers: 3
+  nas_model_size: null
+  nas_nodes_per_layer: 4
+  nas_optimization_mode: Memory
+  native_amp: false
+  num_gpus: 1
+  ondevice_training: false
+  optimizer: sgd
+  output_int: null
+  pretrained_checkpoint_path: null
+  project_path: null
+  properties:
+  - default: []
+    dynamic: true
+    label: Preprocessing Parameters
+    name: preprocessing_group
+    type: group
+  - default: []
+    dynamic: true
+    label: Training Parameters
+    name: train_group
+    type: group
+  quantization: 2
+  quantization_activation_bitwidth: 8
+  quantization_method: QAT
+  quantization_weight_bitwidth: 8
+  run_quant_train_only: false
+  target_device_flash_kb: 100
+  target_devices: {}
+  train_output_path: null
+  trainable_layers_from_last: 1
+  training_backend: null
+  training_device: cuda
+  training_epochs: 10
+  training_path: E:\desk\ti-npu\saw2sin_npu\data\projects\refcase\run\ref_e2e_model\training\base
+  training_path_quantization: E:\desk\ti-npu\saw2sin_npu\data\projects\refcase\run\ref_e2e_model\training\quantization
+  weight_decay: 0.0001

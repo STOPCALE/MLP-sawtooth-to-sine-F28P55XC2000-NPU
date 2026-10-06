@@ -1,0 +1,27 @@
+# DIAGNOSTIC: compile the known-good model (official generic_timeseries_regression
+# REGR_2k int8) through the SAME BYOM compile-only flow, to isolate whether the
+# zero-NPU-offload problem is in the flow/config or in the saw2sin ONNX itself.
+
+common:
+  target_module: 'timeseries'
+  task_type: 'generic_timeseries_regression'
+  target_device: 'F28P55'
+  run_name: 'ref_e2e_model'
+
+dataset:
+  enable: False
+  dataset_name: refcase
+
+data_processing_feature_extraction:
+  feature_extraction_name: None
+
+training:
+  enable: False
+  model_name: reftest
+  quantization: 2
+
+testing: {}
+
+compilation:
+  enable: True
+  model_path: 'E:\desk\ti-npu\saw2sin_npu\case_saw2sin\ref_regr2k_model.onnx'

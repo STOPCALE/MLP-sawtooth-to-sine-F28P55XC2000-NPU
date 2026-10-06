@@ -1,0 +1,14 @@
+{
+  "num_samples": 200,
+  "skipped_wrong_shape": 0,
+  "diff_max": 0.04268984496593475,
+  "diff_mean": 0.010091653268609661,
+  "float_metrics": {
+    "max_err": 0.004682362079620361,
+    "mean_err": 0.0007278704433701932
+  },
+  "quant_metrics": {
+    "max_err": 0.043917179107666016,
+    "mean_err": 0.010105222463607788
+  }
+}

@@ -1,0 +1,89 @@
+E:\anaconda\envs\ti-npu\lib\runpy.py:126: RuntimeWarning: 'tinyml_modelmaker.run_tinyml_modelmaker' found in sys.modules after import of package 'tinyml_modelmaker', but prior to execution of 'tinyml_modelmaker.run_tinyml_modelmaker'; this may result in unpredictable behaviour
+  warn(RuntimeWarning(msg))
+INFO: __main__          :  Run params is at: E:\desk\ti-npu\saw2sin_npu\examples\saw2sin\out\saw2sin\compile\work\data\projects\saw2sin\run\saw2sin\run.yaml
+   INFO: root                : TinyVerse Toolchain Version: 01_05_00
+   INFO: root                : Script: ..\..\..\..\..\..\..\tinyml-tensorlab-main\tinyml-tensorlab-main\tinyml-tinyverse\tinyml_tinyverse\references\common\compilation.py
+   INFO: root                : Target: c, ti-npu type=hard skip_normalize=false output_int=false
+   INFO: root                : Compilation settings - skip_normalize: False ('false' for float models, 'true' otherwise)
+   INFO: root                : Compilation settings - output_int: False ('false' for float models, 'true/false' otherwise)
+   INFO: root                : Compilation settings - ti-npu type: hard ('soft' for float models/generic quantized models, 'soft/hard' otherwise)
+   INFO: root.gen_artifacts  : Changing directory to: E:\desk\ti-npu\saw2sin_npu\examples\saw2sin\out\saw2sin\compile\work\data\projects\saw2sin\run\saw2sin\compilation
+   INFO: root.gen_artifacts  : Calling TVM to generate artifacts: 
+WARNING: ti_mcu_nnc          : PWCONV layer NOT offloaded to TI-NPU
+WARNING: ti_mcu_nnc          : PWCONV layer config: 8-bit input [10, 1, 1], 8-bit output [10, 1, 64], 8-bit kernel [1, 1], strides [1, 1], padding [(0, 0), (0, 0)], data layout NHWC, kernel layout HWIO
+WARNING: ti_mcu_nnc          : PWCONV does not support 1 input channels. Please change to multiples of 4.
+   INFO: ti_mcu_nnc          :  ============================================================
+   INFO: ti_mcu_nnc          :  TI NPU Offloading Report
+   INFO: ti_mcu_nnc          :  ============================================================
+   INFO: ti_mcu_nnc          :  
+   INFO: ti_mcu_nnc          :  LAYER/OPERATOR COUNT SUMMARY
+   INFO: ti_mcu_nnc          :  ============================================================
+   INFO: ti_mcu_nnc          : 
+   INFO: ti_mcu_nnc          :  Layer Patterns Offloaded
+   INFO: ti_mcu_nnc          :  ------------------------------------------------------------
+   INFO: ti_mcu_nnc          :  Layer Pattern                                    Count     
+   INFO: ti_mcu_nnc          :  ------------------------------------------------------------
+   INFO: ti_mcu_nnc          :  PWCONV                                           1         
+   INFO: ti_mcu_nnc          : 
+   INFO: ti_mcu_nnc          :  Operators not Offloaded
+   INFO: ti_mcu_nnc          :  ------------------------------------------------------------
+   INFO: ti_mcu_nnc          :  Operator                                         Count     
+   INFO: ti_mcu_nnc          :  ------------------------------------------------------------
+   INFO: ti_mcu_nnc          :  add                                              1         
+   INFO: ti_mcu_nnc          :  multiply                                         5         
+   INFO: ti_mcu_nnc          :  floor                                            1         
+   INFO: ti_mcu_nnc          :  clip                                             3         
+   INFO: ti_mcu_nnc          :  cast                                             4         
+   INFO: ti_mcu_nnc          :  reshape                                          2         
+   INFO: ti_mcu_nnc          :  qnn.conv2d                                       2         
+   INFO: ti_mcu_nnc          :  nn.bias_add                                      2         
+   INFO: ti_mcu_nnc          :  right_shift                                      2         
+   INFO: ti_mcu_nnc          :  qnn.dequantize                                   1         
+   INFO: ti_mcu_nnc          : 
+   INFO: ti_mcu_nnc          :  ============================================================
+   INFO: ti_mcu_nnc          : 
+   INFO: ti_mcu_nnc          : 
+   INFO: ti_mcu_nnc          :  MODEL PARTITION - TOPOLOGICAL VIEW
+   INFO: ti_mcu_nnc          :  ============================================================
+   INFO: ti_mcu_nnc          :  Layer/Operator                                   Offloaded 
+   INFO: ti_mcu_nnc          :  ------------------------------------------------------------
+   INFO: ti_mcu_nnc          :  Input
+   INFO: ti_mcu_nnc          :  add                                              [ ]       
+   INFO: ti_mcu_nnc          :  multiply                                         [ ]       
+   INFO: ti_mcu_nnc          :  multiply                                         [ ]       
+   INFO: ti_mcu_nnc          :  floor                                            [ ]       
+   INFO: ti_mcu_nnc          :  clip                                             [ ]       
+   INFO: ti_mcu_nnc          :  cast                                             [ ]       
+   INFO: ti_mcu_nnc          :  reshape                                          [ ]       
+   INFO: ti_mcu_nnc          :  qnn.conv2d                                       [ ]       
+   INFO: ti_mcu_nnc          :  cast                                             [ ]       
+   INFO: ti_mcu_nnc          :  nn.bias_add                                      [ ]       
+   INFO: ti_mcu_nnc          :  multiply                                         [ ]       
+   INFO: ti_mcu_nnc          :  right_shift                                      [ ]       
+   INFO: ti_mcu_nnc          :  clip                                             [ ]       
+   INFO: ti_mcu_nnc          :  cast                                             [ ]       
+   INFO: ti_mcu_nnc          :  PWCONV                                           [X]       
+   INFO: ti_mcu_nnc          :  qnn.conv2d                                       [ ]       
+   INFO: ti_mcu_nnc          :  cast                                             [ ]       
+   INFO: ti_mcu_nnc          :  nn.bias_add                                      [ ]       
+   INFO: ti_mcu_nnc          :  multiply                                         [ ]       
+   INFO: ti_mcu_nnc          :  right_shift                                      [ ]       
+   INFO: ti_mcu_nnc          :  clip                                             [ ]       
+   INFO: ti_mcu_nnc          :  qnn.dequantize                                   [ ]       
+   INFO: ti_mcu_nnc          :  multiply                                         [ ]       
+   INFO: ti_mcu_nnc          :  reshape                                          [ ]       
+   INFO: ti_mcu_nnc          :  Output
+   INFO: ti_mcu_nnc          :  ============================================================
+   INFO: ti_mcu_nnc          : 
+   INFO: ti_mcu_nnc          :  ============================================================
+   INFO: ti_mcu_nnc          :  TI Model Library Memory Usage (mod.a)
+   INFO: ti_mcu_nnc          :  ============================================================
+   INFO: ti_mcu_nnc          :  Code:                      1054 bytes (    1.03 KB)
+   INFO: ti_mcu_nnc          :  RO Data:                   3442 bytes (    3.36 KB)
+   INFO: ti_mcu_nnc          :  RW Data:                   1398 bytes (    1.37 KB)
+   INFO: ti_mcu_nnc          :  Total:                     5894 bytes (    5.76 KB)
+   INFO: ti_mcu_nnc          :  ============================================================
+   INFO: TVMC                :  TI memory calculation completed successfully
+   INFO: root.gen_artifacts  : Changing directory back to: E:\desk\ti-npu\saw2sin_npu\examples\saw2sin\out\saw2sin\compile\work
+   INFO: root.remove_intermittent_files: Removing intermittent files from: E:\desk\ti-npu\saw2sin_npu\examples\saw2sin\out\saw2sin\compile\work\data\projects\saw2sin\run\saw2sin\compilation
+   INFO: tinyml_modelmaker.ai_modules.timeseries.runner: Compiled model is at: E:\desk\ti-npu\saw2sin_npu\examples\saw2sin\out\saw2sin\compile\work\data\projects\saw2sin\run\saw2sin\compilation

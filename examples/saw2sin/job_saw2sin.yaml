@@ -1,0 +1,49 @@
+# saw2sin example job: MLP(1->64->64->1) 卷积化 -> F28P55 NPU
+#
+# 运行 (ti-npu 环境):
+#   E:\anaconda\envs\ti-npu\python.exe -m torch2tinpu all examples\saw2sin\job_saw2sin.yaml
+#
+# 产物输出到 <本文件目录>\out\saw2sin\ (产物目录隔离, 不污染工程其他位置)
+
+name: saw2sin                 # 这里改，ASCII 输出名 (输出目录 / 编译 run 名)
+out_dir: out                  # 相对本文件目录
+seed: 0
+
+adapter:
+  path: adapter_saw2sin.py    # 相对本文件目录，这里改
+
+quant:
+  method: qat                 # qat (微调) | ptq (仅校准)
+  weight_bitwidth: 8
+  activation_bitwidth: 8
+  output_int: false           # 输出反量化为 float (回归任务常规)
+  opset_version: 18           # 勿改: 与官方流程一致, 影响 FC 的 Gemm 融合
+  total_epochs: 15
+  iters_per_epoch: 200
+  batch_size: 256
+  learning_rate: 2.0e-4
+  optimizer: adam
+  scheduler: cosine
+  loss: mse
+  device: auto                # 训练设备: auto | cpu | cuda
+
+verify:
+  enabled: true
+  num_samples: 200
+
+compile:
+  enabled: true
+  target_device: F28P55
+  target_module: timeseries
+  task_type: generic_timeseries_regression    #这里改
+# 时序回归	timeseries	generic_timeseries_regression
+# 时序分类	timeseries	generic_timeseries_classification
+# 时序异常检测	timeseries	generic_timeseries_anomalydetection
+# 时序预测	timeseries	generic_timeseries_forecasting
+# 图像分类	image	image_classification
+  # model_path: null          # 默认用本 job 的 int8 产物; 也可指向外部 TI-NPU 格式 ONNX
+  # toolchain_root: null      # 默认自动探测 E:\ccs\ccs\tools\compiler\ti-cgt-c2000_*.LTS
+
+deploy:
+  enabled: true
+  generate_c_template: true
