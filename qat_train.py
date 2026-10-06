@@ -45,7 +45,7 @@ class MLP(nn.Module):
         layers = []
         d = in_dim
         for _ in range(n_layers):
-            layers += [nn.Linear(d, hidden), nn.SiLU()]
+            layers += [nn.Linear(d, hidden), nn.ReLU()]
             d = hidden
         layers.append(nn.Linear(d, 1))
         self.net = nn.Sequential(*layers)

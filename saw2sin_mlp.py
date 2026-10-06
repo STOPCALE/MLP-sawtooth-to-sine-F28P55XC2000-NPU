@@ -52,7 +52,7 @@ class MLP(nn.Module):   #继承自nn.Module
         in_dim = 1
         for _ in range(n_layers):
             layers.append(nn.Linear(in_dim, hidden))   # 全连接层
-            layers.append(nn.SiLU())                   # 激活函数 (可换 ReLU / Tanh 做对比)
+            layers.append(nn.ReLU())                   # 激活函数 (可换 ReLU / Tanh 做对比)
             in_dim = hidden
         layers.append(nn.Linear(in_dim, 1))            # 输出层: 1 个标量
         self.net = nn.Sequential(*layers)
