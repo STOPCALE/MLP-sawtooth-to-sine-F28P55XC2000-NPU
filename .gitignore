@@ -1,0 +1,18 @@
+# ===== Python 缓存与虚拟环境（必忽略）=====
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+env/
+
+# ===== 编辑器 / 操作系统垃圾（必忽略）=====
+.vscode/
+.idea/
+Thumbs.db
+desktop.ini
+
+# ===== 可选：生成的结果文件 =====
+# 默认【保留】存档；若想只留源码、忽略生成物，取消下面两行注释即可
+# *.png
+# mlp_weights.h
