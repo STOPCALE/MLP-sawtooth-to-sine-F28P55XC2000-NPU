@@ -1,0 +1,102 @@
+{
+    // ================================================================
+    //  本工程脱离 CCS 的命令行构建 / 下载任务
+    //  工具来源:CCS 21.0.1 (E:\ccs\ccs) + C2000Ware 26.01
+    //  - 构建    : 直接调用 gmake 跑 CCS 生成的 makefile
+    //  - 下载运行: DSLite(CCS 自带,使用工程根目录的 LaunchPad 目标配置)
+    //  用法:Ctrl+Shift+B = 构建 CPU1_FLASH;F1 -> "Tasks: Run Task" 选择其他任务
+    // ================================================================
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "构建 CPU1_FLASH",
+            "type": "shell",
+            "command": "E:\\ccs\\ccs\\utils\\bin\\gmake.exe",
+            "args": ["-C", "CPU1_FLASH", "all"],
+            "options": { "cwd": "${workspaceFolder}" },
+            "group": { "kind": "build", "isDefault": true },
+            "problemMatcher": [
+                {
+                    "owner": "ti-c2000-flash",
+                    "fileLocation": ["relative", "${workspaceFolder}/CPU1_FLASH"],
+                    "pattern": {
+                        "regexp": "^\"([^\"]+)\", line (\\d+): (fatal error|error|warning) #(\\d+)(?:-[A-Z])?: (.*)$",
+                        "file": 1,
+                        "line": 2,
+                        "severity": 3,
+                        "code": 4,
+                        "message": 5
+                    }
+                }
+            ],
+            "presentation": { "panel": "shared", "clear": true }
+        },
+        {
+            "label": "构建 CPU1_RAM",
+            "type": "shell",
+            "command": "E:\\ccs\\ccs\\utils\\bin\\gmake.exe",
+            "args": ["-C", "CPU1_RAM", "all"],
+            "options": { "cwd": "${workspaceFolder}" },
+            "group": { "kind": "build" },
+            "problemMatcher": [
+                {
+                    "owner": "ti-c2000-ram",
+                    "fileLocation": ["relative", "${workspaceFolder}/CPU1_RAM"],
+                    "pattern": {
+                        "regexp": "^\"([^\"]+)\", line (\\d+): (fatal error|error|warning) #(\\d+)(?:-[A-Z])?: (.*)$",
+                        "file": 1,
+                        "line": 2,
+                        "severity": 3,
+                        "code": 4,
+                        "message": 5
+                    }
+                }
+            ],
+            "presentation": { "panel": "shared", "clear": true }
+        },
+        {
+            "label": "清理 CPU1_FLASH",
+            "type": "shell",
+            "command": "E:\\ccs\\ccs\\utils\\bin\\gmake.exe",
+            "args": ["-C", "CPU1_FLASH", "clean"],
+            "options": { "cwd": "${workspaceFolder}" },
+            "problemMatcher": []
+        },
+        {
+            "label": "清理 CPU1_RAM",
+            "type": "shell",
+            "command": "E:\\ccs\\ccs\\utils\\bin\\gmake.exe",
+            "args": ["-C", "CPU1_RAM", "clean"],
+            "options": { "cwd": "${workspaceFolder}" },
+            "problemMatcher": []
+        },
+        {
+            "label": "下载到 Flash 并运行 (CPU1_FLASH)",
+            "type": "shell",
+            "command": "E:\\ccs\\ccs\\ccs_base\\DebugServer\\bin\\DSLite.exe",
+            "args": [
+                "flash",
+                "--config=${workspaceFolder}\\TMS320F28P550SJ9_LaunchPad.ccxml",
+                "${workspaceFolder}\\CPU1_FLASH\\uart_and_npu.out"
+            ],
+            "options": { "cwd": "${workspaceFolder}" },
+            "dependsOn": "构建 CPU1_FLASH",
+            "dependsOrder": "sequence",
+            "problemMatcher": []
+        },
+        {
+            "label": "加载到 RAM 并运行 (CPU1_RAM)",
+            "type": "shell",
+            "command": "E:\\ccs\\ccs\\ccs_base\\DebugServer\\bin\\DSLite.exe",
+            "args": [
+                "load",
+                "--config=${workspaceFolder}\\TMS320F28P550SJ9_LaunchPad.ccxml",
+                "${workspaceFolder}\\CPU1_RAM\\uart_and_npu.out"
+            ],
+            "options": { "cwd": "${workspaceFolder}" },
+            "dependsOn": "构建 CPU1_RAM",
+            "dependsOrder": "sequence",
+            "problemMatcher": []
+        }
+    ]
+}

@@ -1,0 +1,56 @@
+#include "board.h"
+
+// 串口已回显的字符个数：运行时可在 CCS 的 Expressions 窗口 Watch 观察
+uint32_t echoCount = 0;
+
+// Function Declarations
+
+void SCI_sendString(const char *msg);
+
+void main(void)
+{
+    uint16_t rxChar;
+
+    //CPUInitialization
+    Device_init();
+    Interrupt_initModule();
+    Interrupt_initVectorTable();
+
+    // Configure the GPIOs/ADc/PWM through SysConfig generated files
+    Board_init();
+    // Enable global interrupts and real-time debug
+    EINT;
+    ERTM;
+
+    // 开机先向主机发一条问候，验证 TX(发送) 通路
+    // 注意：Board_init() 内部已经调用 SCI_init()，SCIA 已配好 115200-8N1-FIFO
+    SCI_sendString("\r\nSCIA echo ready. Type something:\r\n");
+
+    // Main Loop
+    while(1)
+    {
+        // 查询方式：RX FIFO 里确实有数据才读，主循环不被卡死
+        if (SCI_getRxFIFOStatus(mySCI0_BASE) != SCI_FIFO_RX0)
+        {
+            // 取出 1 个字符（此处非阻塞，因为上面已确认 FIFO 非空）
+            rxChar = SCI_readCharNonBlocking(mySCI0_BASE);
+            // 原样回显：一次同时验证 RX(接收) 与 TX(发送) 两条通路
+            SCI_writeCharBlockingFIFO(mySCI0_BASE, rxChar);
+            echoCount++;
+        }
+    }
+}
+
+// 发送一串以 '\0' 结尾的字符串
+// 自己手数字符个数容易出错，所以用循环自动求出长度再交给 driverlib
+void SCI_sendString(const char *msg)
+{
+    uint16_t len = 0;
+    while (msg[len] != '\0')
+    {
+        len++;
+    }
+    // SCI 外设按 16 位字收发、低 8 位有效，所以把 char* 强转成 uint16_t*
+    SCI_writeCharArray(mySCI0_BASE, (uint16_t *)msg, len);
+}
+
