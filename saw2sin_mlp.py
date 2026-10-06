@@ -29,7 +29,7 @@ N_LAYERS = 2        # 隐藏层数量
 BATCH = 256         # 每次迭代随机采样的样本数
 ITERS = 16000        # 训练迭代次数
 LR = 1e-3           # 学习率
-FREQ = 8.0          # 正弦波频率 (含几个完整周期); 改成 2.0 / 4.0 观察高频更难学
+FREQ = 1.0          # 正弦波频率 (含几个完整周期); 改成 2.0 / 4.0 观察高频更难学
 
 torch.manual_seed(SEED)
 
@@ -45,8 +45,8 @@ def sample_batch(n):
 
 
 # ----------------- 2. 模型: 多层感知机 MLP -----------------
-class MLP(nn.Module):
-    def __init__(self, hidden=HIDDEN, n_layers=N_LAYERS):
+class MLP(nn.Module):   #继承自nn.Module
+    def __init__(self, hidden=HIDDEN, n_layers=N_LAYERS):   #构造函数的默认参数
         super().__init__()
         layers = []
         in_dim = 1
@@ -63,7 +63,7 @@ class MLP(nn.Module):
 
 # ----------------- 3. 训练 -----------------
 model = MLP()
-optimizer = torch.optim.Adam(model.parameters(), lr=LR)   # Adam 优化器
+optimizer = torch.optim.Adam(model.parameters(), lr=LR)   # model.parameters() 自动收集所有层的权重（训练器靠它更新参数）
 loss_fn = nn.MSELoss()                                    # 均方误差损失
 
 print("training start ...")
