@@ -64,16 +64,32 @@ static void hand_quant_layer(const qlayer_mcu_t *L, const int16_t *x, int16_t *q
     for (i = 0; i < L->in_dim; i++)
         xs_buf[i] = (int16_t)(x[i] - (int16_t)L->z_in);
 
-    /* 第 1 遍: 纯整数点积 (期待仍被编成 RPT + MAC) */
-    for (o = 0; o < L->out_dim; o++)
+    /* 第 1 遍: 纯整数点积 (C6: 行进指针; in_dim==1 特化) */
+    if (L->in_dim == 1)
     {
-        const int16_t *w = &L->W_q[o * L->in_dim];
-        int32_t acc = L->b_int[o];
-        for (i = 0; i < L->in_dim; i++)
+        /* L0 特化: 每行只 1 个乘法, 免得内层循环/RPT/每行 o*in_dim 索引计算 */
+        const int16_t *wp = L->W_q;
+        const int32_t *bp = L->b_int;
+        int32_t       *ap = acc_buf;
+        const int16_t  x0 = xs_buf[0];
+        for (o = 0; o < L->out_dim; o++)
         {
-            acc += (int32_t)(xs_buf[i] * w[i]);
+            *ap++ = *bp++ + (int32_t)(x0 * *wp++);
         }
-        acc_buf[o] = acc;
+    }
+    else
+    {
+        /* 通用路径: 实测行进指针改写反而慢 4.5% (L1) -> 保留 C5 版结构 */
+        for (o = 0; o < L->out_dim; o++)
+        {
+            const int16_t *w = &L->W_q[o * L->in_dim];
+            int32_t acc = L->b_int[o];
+            for (i = 0; i < L->in_dim; i++)
+            {
+                acc += (int32_t)(xs_buf[i] * w[i]);
+            }
+            acc_buf[o] = acc;
+        }
     }
 
     /* 第 2 遍: 批量 requant (独立 item; C5a: 单加魔数, 整数域再减去它) */
