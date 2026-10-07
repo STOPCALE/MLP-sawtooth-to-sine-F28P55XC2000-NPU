@@ -39,7 +39,11 @@ static inline int32_t round_nearest_even_f(float x)
  * ------------------------------------------------------------------------ */
 static void hand_quant_layer(const qlayer_mcu_t *L, const int16_t *x, int16_t *q_out)
 {
-    int32_t o, i;
+    /* C1 实验: 循环下标用 16 位 (C28x 的 int/int16_t 就是 16 位).
+     * 汇编依据 (docs/08): int32_t 下标每轮要 4 条循环控制 (MOVB/SUBB/CMPL/B);
+     * 下标最大 = 63*64+63 = 4095, 16 位绰绰有余.
+     * 累加器 acc 仍是 int32_t, 勿动! */
+    int16_t o, i;
     for (o = 0; o < L->out_dim; o++)
     {
         int32_t acc = L->b_int[o];
