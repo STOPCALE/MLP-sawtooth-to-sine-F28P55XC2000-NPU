@@ -22,10 +22,11 @@ import time
 
 TAIL = b"\x00\x00\x80\x7f"
 
-LAYOUT33 = """已知通道布局 (33ch)：
+LAYOUT = """已知通道布局 (36ch, C4 诊断版)：
   CH0..9    锯齿波输入          CH10..19  NPU 输出
   CH20      NPU 耗时 (us/10点)  CH21      CPU 耗时 (us/10点)
-  CH22      自检最大误差         CH23..32  手写 CPU 输出 (10点)"""
+  CH22      自检最大误差         CH23..32  手写 CPU 输出 (10点)
+  CH33..35  C4 诊断: 每层周期数 L0/L1/L2 (单点)"""
 
 
 def parse_frames(buf, nch):
@@ -82,7 +83,7 @@ def main():
     ap = argparse.ArgumentParser(description="读取 VOFA JustFloat 帧并统计（AI 工具）")
     ap.add_argument("--port", default="COM6")
     ap.add_argument("--baud", type=int, default=115200)
-    ap.add_argument("--channels", type=int, default=33)
+    ap.add_argument("--channels", type=int, default=36)
     ap.add_argument("--seconds", type=float, default=3.0, help="最长读取时间（秒）")
     ap.add_argument("--frames", type=int, default=0, help="目标帧数（达到提前结束；0=纯按时间）")
     ap.add_argument("--dump", action="store_true", help="打印一帧完整各通道")
@@ -127,8 +128,8 @@ def main():
 
     print("收到 %d 字节 -> %d 帧    用时 %.2f s    帧率 %.1f Hz"
           % (len(buf), len(frames), dt, len(frames) / dt))
-    if a.channels == 33:
-        print(LAYOUT33)
+    if a.channels >= 33:
+        print(LAYOUT)
 
     if a.channels >= 23:
         v20, v21, v22 = col(frames, 20), col(frames, 21), col(frames, 22)
@@ -145,6 +146,21 @@ def main():
                   % (a.mhz, a.macs,
                      m20 * a.mhz / (10.0 * a.macs), m21 * a.mhz / (10.0 * a.macs)))
         print("CH22 自检最大误差 : %.4f   %s" % (m22, verdict22(m22)))
+
+    if a.channels >= 36:
+        c33 = mean(col(frames, 33))
+        c34 = mean(col(frames, 34))
+        c35 = mean(col(frames, 35))
+        print("")
+        print("C4 每层周期数 (单点):")
+        print("  L0 (1->64,    64 MAC) : %8.0f cyc -> %6.1f cyc/行" % (c33, c33 / 64.0))
+        print("  L1 (64->64, 4096 MAC) : %8.0f cyc -> %6.2f cyc/MAC" % (c34, c34 / 4096.0))
+        print("  L2 (64->1,    64 MAC) : %8.0f cyc" % (c35,))
+        if a.channels >= 23:
+            per_pt = mean(col(frames, 21)) * a.mhz / 10.0
+            rest = per_pt - (c33 + c34 + c35)
+            print("  三层合计 %.0f cyc/点 | CPU 总 %.0f cyc/点 | 其余(量化/调用等) %.0f"
+                  % (c33 + c34 + c35, per_pt, rest))
 
     if a.dump:
         f0 = frames[-1]
