@@ -13,10 +13,17 @@
 #include "quant_params_mcu.h"
 #include <math.h>
 
+#if defined(__TI_COMPILER_VERSION__)
+#include "driverlib.h"          /* C4 诊断: 读 CPUTimer1 给每层计时 */
+#endif
+
 /* 供 CCS Expressions 窗口观察; volatile 保证不被优化掉 */
 volatile float g_st_maxerr   = -1.0f;   /* 自检最大误差 (期望 ~3.1e-2) */
 volatile float g_st_maxerr_s =  0.0f;   /* 最大误差出现的输入 s */
 volatile float g_y_cpu       =  0.0f;   /* 最近一次 hand_infer_one 的输出 */
+
+/* C4 诊断: 每层最近一次耗时 (周期数, 单点); 仅 TI 编译器下真实测量, PC 上恒 0 */
+volatile uint32_t g_cyc_l0 = 0u, g_cyc_l1 = 0u, g_cyc_l2 = 0u;
 
 #define N_SELFTEST 128
 #define PI_F       3.14159265f
@@ -80,9 +87,25 @@ float hand_infer_one(float s)
     if (t >  127) t =  127;
     q0[0] = (int16_t)t;
 
+#if defined(__TI_COMPILER_VERSION__)
+    {
+        uint32_t t0, t1, t2, t3;
+        t0 = CPUTimer_getTimerCount(CPUTIMER1_BASE);
+        hand_quant_layer(&LAYERS_MCU[0], q0, q1);
+        t1 = CPUTimer_getTimerCount(CPUTIMER1_BASE);
+        hand_quant_layer(&LAYERS_MCU[1], q1, q2);
+        t2 = CPUTimer_getTimerCount(CPUTIMER1_BASE);
+        hand_quant_layer(&LAYERS_MCU[2], q2, q3);
+        t3 = CPUTimer_getTimerCount(CPUTIMER1_BASE);
+        g_cyc_l0 = t0 - t1;      /* 递减计数: 差值 = 经过周期数 (回绕安全) */
+        g_cyc_l1 = t1 - t2;
+        g_cyc_l2 = t2 - t3;
+    }
+#else
     hand_quant_layer(&LAYERS_MCU[0], q0, q1);
     hand_quant_layer(&LAYERS_MCU[1], q1, q2);
     hand_quant_layer(&LAYERS_MCU[2], q2, q3);
+#endif
 
     /* 出口反量化: y = S_out * (q - z_out) */
     return LAYERS_MCU[2].S_out * ((float)q3[0] - LAYERS_MCU[2].z_out);

@@ -62,13 +62,14 @@ void main(void)
     EINT;
     ERTM;
 
+    // ---- 2. 计时器初始化: CPUTimer1, SYSCLK 150MHz, 自由递减计数 ----
+    //   (先于自检: C4 诊断在 hand_infer_one 里读它给每层计时)
+    CPUTimer1_init();
+
     // ---- 3.5 手写整数推理自检 (开机一次) ----
     //   结果看 g_st_maxerr: 期望 ~3.1e-2  (与 PC 端 PTQ 实测一致)
     //   若变成 1e-1 ~ 1.0 => 魔数取整被编译器优化掉了
     hand_selftest();
-
-    // ---- 2. 计时器初始化: CPUTimer1, SYSCLK 150MHz, 自由递减计数 ----
-    CPUTimer1_init();
 
     // ---- 3. 绑定模型输入输出指针 ----
     g_npu_in.input   = (void *)g_in;
@@ -126,12 +127,16 @@ void main(void)
         //     CH21        手写 CPU 一次推理(10 个点)耗时 [us]   <-- 与 CH20 同口径
         //     CH22        自检最大误差 (期望 ~3.1e-2; 若 0.1~1.0 => 魔数被优化折叠)
         //     CH23..CH32  手写 CPU 的 10 点输出                    <-- 与 CH10..19 逐点对比
+        //     CH33..CH35  C4 诊断: 每层耗时 [周期数] (L0 / L1 / L2, 单点)
         for (k = 0u; k < FRAME; k++) { SCI_sendFloat(g_in[k]);  }
         for (k = 0u; k < FRAME; k++) { SCI_sendFloat(g_out[k]); }
         SCI_sendFloat(g_us_last);
         SCI_sendFloat(g_us_cpu);
         SCI_sendFloat(g_st_maxerr);
         for (k = 0u; k < FRAME; k++) { SCI_sendFloat(g_ycpu[k]); }
+        SCI_sendFloat((float)g_cyc_l0);
+        SCI_sendFloat((float)g_cyc_l1);
+        SCI_sendFloat((float)g_cyc_l2);
         SCI_sendFrameTail();
     }
 }

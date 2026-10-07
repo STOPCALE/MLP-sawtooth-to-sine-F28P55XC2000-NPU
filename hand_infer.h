@@ -23,6 +23,9 @@ extern volatile float g_st_maxerr;      /* 自检最大误差 (期望 ~3.1e-2) *
 extern volatile float g_st_maxerr_s;    /* 最大误差出现的输入 s */
 extern volatile float g_y_cpu;          /* 最近一次 hand_infer_one 的输出 (可选) */
 
+/* C4 诊断: 每层最近一次耗时 (周期数, 单点); 仅 TI 编译器下更新 */
+extern volatile uint32_t g_cyc_l0, g_cyc_l1, g_cyc_l2;
+
 #endif /* HAND_INFER_H */
 
 /* === end of hand_infer.h === */
