@@ -1,0 +1,118 @@
+﻿conda : E:\desk\DeepStudy\Charge_Num\inspect_qat.py:17: FutureWarning: You are 
+using `torch.load` with `weights_only=False` (the current default value), which
+ uses the default pickle module implicitly. It is possible to construct malicio
+us pickle data which will execute arbitrary code during unpickling (See https:/
+/github.com/pytorch/pytorch/blob/main/SECURITY.md#untrusted-models for more det
+ails). In a future release, the default value for `weights_only` will be flippe
+d to `True`. This limits the functions that could be executed during unpickling
+. Arbitrary objects will no longer be allowed to be loaded via this mode unless
+ they are explicitly allowlisted by the user via `torch.serialization.add_safe_
+globals`. We recommend you start setting `weights_only=True` for any use case w
+here you don't have full control of the loaded file. Please open an issue on Gi
+tHub for any issues related to this experimental feature.
+所在位置 行:1 字符: 1
++ conda run --no-capture-output -n torch python inspect_qat.py 2>&1 | O ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (E:\desk\DeepStu...mental feature. 
+   :String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+  sd = torch.load(CKPT, map_location="cpu")
+E:\anaconda\envs\torch\lib\site-packages\torch\_utils.py:413: UserWarning: Type
+dStorage is deprecated. It will be removed in the future and UntypedStorage wil
+l be the only storage class. This should only matter to you if you are using st
+orages directly.  To access UntypedStorage directly, use tensor.untyped_storage
+() instead of tensor.storage()
+  device=storage.device,
+==============================================================================
+file : E:\desk\DeepStudy\Charge_Num\saw2sin_qat_state.pt
+type : OrderedDict | n_keys : 14
+==============================================================================
+net_0_input_scale_0                            Tensor         shape=()           dtype=torch.float32
+      value = 0.007783437613397837
+net_0_input_zero_point_0                       Tensor         shape=()           dtype=torch.int64
+      value = 127
+net.0.scale                                    Tensor         shape=()           dtype=torch.float32
+      value = 0.006216925568878651
+net.0.zero_point                               Tensor         shape=()           dtype=torch.int64
+      value = 0
+net.0._packed_params.dtype                     dtype         
+net.0._packed_params._packed_params            tuple         
+      tuple len = 2 | ['Tensor', 'Parameter']
+      W_q.int_repr[:6] = [-128, 127, -127, -128, -128, 127]
+      W_q shape        = (64, 1) dtype torch.qint8
+      W  per-channel scale[:4] = [0.00016717927064746618, 0.004735116846859455, 0.006927394773811102, 0.006256491411477327]
+      W  per-channel zp[:4]    = [0, 0, 0, 0]
+      bias dtype = torch.float32 first4 = [0.5241726636886597, -0.13549788296222687, 0.11777496337890625, 0.2556467056274414]
+net.2.scale                                    Tensor         shape=()           dtype=torch.float32
+      value = 0.00886558461934328
+net.2.zero_point                               Tensor         shape=()           dtype=torch.int64
+      value = 0
+net.2._packed_params.dtype                     dtype         
+net.2._packed_params._packed_params            tuple         
+      tuple len = 2 | ['Tensor', 'Parameter']
+      W_q.int_repr[:6] = [-4, -41, -20, -5, -22, 12]
+      W_q shape        = (64, 64) dtype torch.qint8
+      W  per-channel scale[:4] = [0.003595703514292836, 0.0021459104027599096, 0.0024696681648492813, 0.003676170017570257]
+      W  per-channel zp[:4]    = [0, 0, 0, 0]
+      bias dtype = torch.float32 first4 = [0.08705250173807144, 0.10084973275661469, 0.1671418845653534, 0.09191317111253738]
+net.4.scale                                    Tensor         shape=()           dtype=torch.float32
+      value = 0.007837923243641853
+net.4.zero_point                               Tensor         shape=()           dtype=torch.int64
+      value = 128
+net.4._packed_params.dtype                     dtype         
+net.4._packed_params._packed_params            tuple         
+      tuple len = 2 | ['Tensor', 'Parameter']
+      W_q.int_repr[:6] = [-110, 61, 103, -56, 6, -16]
+      W_q shape        = (1, 64) dtype torch.qint8
+      W  per-channel scale[:4] = [0.0019029246177524328]
+      W  per-channel zp[:4]    = [0]
+      bias dtype = torch.float32 first4 = [-0.043494850397109985]
+==============================================================================
+QDQ ONNX: saw2sin_int8.onnx
+  initializers:
+    s_zero_point                                   shape=()           dtype=int8     head=[0]
+    s_scale                                        shape=()           dtype=float32  head=[0.007843137718737125]
+    net.0.weight_zero_point                        shape=(64,)        dtype=int8     head=[0, 0, 0, 0]
+    net.0.weight_scale                             shape=(64,)        dtype=float32  head=[0.0001622308191144839, 0.004756950307637453, 0.006965124048292637, 0.006269433535635471]
+    net.0.weight_quantized                         shape=(64, 1)      dtype=int8     head=[-127, 127, -127, -127]
+    /net/net.1/Relu_output_0_zero_point            shape=()           dtype=int8     head=[-128]
+    /net/net.1/Relu_output_0_scale                 shape=()           dtype=float32  head=[0.006249784957617521]
+    net.2.weight_zero_point                        shape=(64,)        dtype=int8     head=[0, 0, 0, 0]
+    net.2.weight_scale                             shape=(64,)        dtype=float32  head=[0.003321246011182666, 0.002152653643861413, 0.0024672646541148424, 0.0036798918154090643]
+    net.2.weight_quantized                         shape=(64, 64)     dtype=int8     head=[-4, -44, -22, -6]
+    /net/net.3/Relu_output_0_zero_point            shape=()           dtype=int8     head=[-128]
+    /net/net.3/Relu_output_0_scale                 shape=()           dtype=float32  head=[0.008961424231529236]
+    y_zero_point                                   shape=()           dtype=int8     head=[0]
+    y_scale                                        shape=()           dtype=float32  head=[0.007839234545826912]
+    net.4.weight_zero_point                        shape=(1,)         dtype=int8     head=[0]
+    net.4.weight_scale                             shape=(1,)         dtype=float32  head=[0.0019115846371278167]
+    net.4.weight_quantized                         shape=(1, 64)      dtype=int8     head=[-109, 61, 103, -55]
+    net.0.bias_quantized                           shape=(64,)        dtype=int32    head=[412809, -3604, 2203, 5230]
+    net.0.bias_quantized_scale                     shape=(64,)        dtype=float32  head=[1.2723986628770945e-06, 3.73094153474085e-05, 5.462842818815261e-05, 4.9172031140187755e-05]
+    net.0.bias_quantized_zero_point                shape=(64,)        dtype=int32    head=[0, 0, 0, 0]
+    net.2.bias_quantized                           shape=(64,)        dtype=int32    head=[4186, 7491, 10829, 4003]
+    net.2.bias_quantized_scale                     shape=(64,)        dtype=float32  head=[2.075707379844971e-05, 1.3453622159431688e-05, 1.541987330710981e-05, 2.299853258591611e-05]
+    net.2.bias_quantized_zero_point                shape=(64,)        dtype=int32    head=[0, 0, 0, 0]
+    net.4.bias_quantized                           shape=(1,)         dtype=int32    head=[-2544]
+    net.4.bias_quantized_scale                     shape=(1,)         dtype=float32  head=[1.713052006380167e-05]
+    net.4.bias_quantized_zero_point                shape=()           dtype=int32    head=[0]
+  nodes:
+    DequantizeLinear   in=['net.0.bias_quantized', 'net.0.bias_quantized_scale', 'net.0.bias_quantized_zero_point'] out=['net.0.bias']
+    DequantizeLinear   in=['net.0.weight_quantized', 'net.0.weight_scale', 'net.0.weight_zero_point'] out=['net.0.weight_DequantizeLinear_Output']
+    DequantizeLinear   in=['net.2.bias_quantized', 'net.2.bias_quantized_scale', 'net.2.bias_quantized_zero_point'] out=['net.2.bias']
+    DequantizeLinear   in=['net.2.weight_quantized', 'net.2.weight_scale', 'net.2.weight_zero_point'] out=['net.2.weight_DequantizeLinear_Output']
+    DequantizeLinear   in=['net.4.bias_quantized', 'net.4.bias_quantized_scale', 'net.4.bias_quantized_zero_point'] out=['net.4.bias']
+    DequantizeLinear   in=['net.4.weight_quantized', 'net.4.weight_scale', 'net.4.weight_zero_point'] out=['net.4.weight_DequantizeLinear_Output']
+    QuantizeLinear     in=['s', 's_scale', 's_zero_point']       out=['s_QuantizeLinear_Output']
+    DequantizeLinear   in=['s_QuantizeLinear_Output', 's_scale', 's_zero_point'] out=['s_DequantizeLinear_Output']
+    Gemm               in=['s_DequantizeLinear_Output', 'net.0.weight_DequantizeLinear_Output', 'net.0.bias'] out=['/net/net.1/Relu_output_0']
+    QuantizeLinear     in=['/net/net.1/Relu_output_0', '/net/net.1/Relu_output_0_scale', '/net/net.1/Relu_output_0_zero_point'] out=['/net/net.1/Relu_output_0_QuantizeLinear_Output']
+    DequantizeLinear   in=['/net/net.1/Relu_output_0_QuantizeLinear_Output', '/net/net.1/Relu_output_0_scale', '/net/net.1/Relu_output_0_zero_point'] out=['/net/net.1/Relu_output_0_DequantizeLinear_Output']
+    Gemm               in=['/net/net.1/Relu_output_0_DequantizeLinear_Output', 'net.2.weight_DequantizeLinear_Output', 'net.2.bias'] out=['/net/net.3/Relu_output_0']
+    QuantizeLinear     in=['/net/net.3/Relu_output_0', '/net/net.3/Relu_output_0_scale', '/net/net.3/Relu_output_0_zero_point'] out=['/net/net.3/Relu_output_0_QuantizeLinear_Output']
+    DequantizeLinear   in=['/net/net.3/Relu_output_0_QuantizeLinear_Output', '/net/net.3/Relu_output_0_scale', '/net/net.3/Relu_output_0_zero_point'] out=['/net/net.3/Relu_output_0_DequantizeLinear_Output']
+    Gemm               in=['/net/net.3/Relu_output_0_DequantizeLinear_Output', 'net.4.weight_DequantizeLinear_Output', 'net.4.bias'] out=['y_QuantizeLinear_Input']
+    QuantizeLinear     in=['y_QuantizeLinear_Input', 'y_scale', 'y_zero_point'] out=['y_QuantizeLinear_Output']
+    DequantizeLinear   in=['y_QuantizeLinear_Output', 'y_scale', 'y_zero_point'] out=['y']
+==============================================================================
