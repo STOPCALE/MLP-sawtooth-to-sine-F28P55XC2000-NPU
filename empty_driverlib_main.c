@@ -106,12 +106,6 @@ void main(void)
         g_us_last = (float)cycles / SYSCLK_MHZ;    // 周期数 -> 微秒
         g_frame_count++;
 
-        // (c) 发送一帧 (VOFA+ JustFloat): 10 输入 -> 10 输出 -> 1 耗时 -> 帧尾
-        for (k = 0u; k < FRAME; k++) { SCI_sendFloat(g_in[k]);  }
-        for (k = 0u; k < FRAME; k++) { SCI_sendFloat(g_out[k]); }
-        SCI_sendFloat(g_us_last);
-        SCI_sendFrameTail();
-        
         // (b2) 手写 CPU 推理 + 计时 (只推理 1 个点)
         t_start = CPUTimer_getTimerCount(CPUTIMER1_BASE);
         g_y_cpu = hand_infer_one(g_in[0]);
@@ -119,7 +113,21 @@ void main(void)
         g_cycles_cpu = t_start - t_end;
         g_us_cpu = (float)g_cycles_cpu / SYSCLK_MHZ;
 
-        SCI_sendFloat(g_us_cpu);        /* CH21: 手写 CPU 推理 1 个点的耗时(us) */
+        // (c) 发送一帧 (VOFA+ JustFloat)
+        //     铁律: 所有数据必须在帧尾之前, 否则下一帧整体错位一格!
+        //     CH0 ..CH9   锯齿波输入
+        //     CH10..CH19  NPU 输出 (正弦)
+        //     CH20        NPU 一次推理(10 个点)耗时 [us]
+        //     CH21        手写 CPU 推理(1 个点)耗时 [us]
+        //     CH22        自检最大误差 (期望 ~3.1e-2; 若 0.1~1.0 => 魔数被优化折叠)
+        //     CH23        手写 CPU 推理输出 y (可与 CH10..CH19 对比看波形)
+        for (k = 0u; k < FRAME; k++) { SCI_sendFloat(g_in[k]);  }
+        for (k = 0u; k < FRAME; k++) { SCI_sendFloat(g_out[k]); }
+        SCI_sendFloat(g_us_last);
+        SCI_sendFloat(g_us_cpu);
+        SCI_sendFloat(g_st_maxerr);
+        SCI_sendFloat(g_y_cpu);
+        SCI_sendFrameTail();
     }
 }
 
