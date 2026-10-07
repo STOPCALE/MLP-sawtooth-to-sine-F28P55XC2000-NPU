@@ -44,12 +44,19 @@ static void hand_quant_layer(const qlayer_mcu_t *L, const int16_t *x, int16_t *q
      * 下标最大 = 63*64+63 = 4095, 16 位绰绰有余.
      * 累加器 acc 仍是 int32_t, 勿动! */
     int16_t o, i;
+    /* C2 实验: 16x16 乘法 + 零点半减提出内层 (循环不变式).
+     * 范围证明 (int8 语义: x,W_q ∈ [-128,127]; z_in ∈ {0,-128}):
+     *   xs = x[i]-z_in ∈ [-128, 255]  (int16 容得下)
+     *   乘积 ∈ [-32640, 32385] ⊂ int16 -> 16 位乘法无损 */
+    static int16_t xs_buf[64];                  /* in_dim <= 64 */
+    for (i = 0; i < L->in_dim; i++)
+        xs_buf[i] = (int16_t)(x[i] - (int16_t)L->z_in);
     for (o = 0; o < L->out_dim; o++)
     {
         int32_t acc = L->b_int[o];
         for (i = 0; i < L->in_dim; i++)
         {
-            acc += ((int32_t)x[i] - L->z_in) * (int32_t)L->W_q[o * L->in_dim + i];
+            acc += (int32_t)(xs_buf[i] * L->W_q[o * L->in_dim + i]);
         }
         int32_t r = round_nearest_even_f((float)acc * L->M[o]) + L->z_out;
         if (r < -128) r = -128;
