@@ -37,7 +37,7 @@ static inline int32_t round_nearest_even_f(float x)
  *   acc = b_int[o] + sum_i (x[i] - z_in) * W_q[o][i]      <- int32 累加
  *   q   = clip( round(acc * M[o]) + z_out, -128, 127 )
  * ------------------------------------------------------------------------ */
-static void hand_quant_layer(const qlayer_mcu_t *L, const int8_t *x, int8_t *q_out)
+static void hand_quant_layer(const qlayer_mcu_t *L, const int16_t *x, int16_t *q_out)
 {
     int32_t o, i;
     for (o = 0; o < L->out_dim; o++)
@@ -50,7 +50,7 @@ static void hand_quant_layer(const qlayer_mcu_t *L, const int8_t *x, int8_t *q_o
         int32_t r = round_nearest_even_f((float)acc * L->M[o]) + L->z_out;
         if (r < -128) r = -128;
         if (r >  127) r =  127;
-        q_out[o] = (int8_t)r;
+        q_out[o] = (int16_t)r;          /* int8 值存 16 位容器 (C28x 无 8 位类型) */
     }
 }
 
@@ -60,14 +60,14 @@ static void hand_quant_layer(const qlayer_mcu_t *L, const int8_t *x, int8_t *q_o
  * ------------------------------------------------------------------------ */
 float hand_infer_one(float s)
 {
-    static int8_t q0[1], q1[64], q2[64], q3[1];
+    static int16_t q0[1], q1[64], q2[64], q3[1];
 
     /* 入口量化: round(s / S_in) + z_in, 先 clip 再装箱
-       (s = +1.0 时 s/S_in ~ 127.5 -> 就近取偶会得 128, 直接转 int8 会绕圈) */
+       (s = +1.0 时 s/S_in ~ 127.5 -> 就近取偶会得 128, 不 clip 会绕圈) */
     int32_t t = round_nearest_even_f(s / LAYERS_MCU[0].S_in) + LAYERS_MCU[0].z_in;
     if (t < -128) t = -128;
     if (t >  127) t =  127;
-    q0[0] = (int8_t)t;
+    q0[0] = (int16_t)t;
 
     hand_quant_layer(&LAYERS_MCU[0], q0, q1);
     hand_quant_layer(&LAYERS_MCU[1], q1, q2);

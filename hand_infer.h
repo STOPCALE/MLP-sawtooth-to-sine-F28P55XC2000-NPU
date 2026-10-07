@@ -24,3 +24,5 @@ extern volatile float g_st_maxerr_s;    /* 最大误差出现的输入 s */
 extern volatile float g_y_cpu;          /* 最近一次 hand_infer_one 的输出 (可选) */
 
 #endif /* HAND_INFER_H */
+
+/* === end of hand_infer.h === */

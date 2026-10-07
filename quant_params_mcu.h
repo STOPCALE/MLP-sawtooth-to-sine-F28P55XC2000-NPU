@@ -14,7 +14,8 @@
 #include <stdint.h>
 
 typedef struct {
-    const int8_t  *W_q;      /* [out*in], row-major: row = output channel */
+    const int16_t *W_q;      /* [out*in] row-major. Values are int8-range,
+                                stored in 16-bit: C28x has no 8-bit type */
     const int32_t *b_int;    /* [out], pre-absorbed bias                  */
     const float   *M;        /* [out], requantization multiplier          */
     float   S_in,  S_out;
@@ -23,7 +24,7 @@ typedef struct {
 } qlayer_mcu_t;
 
 /* ---------- L0 (net.0): 1 -> 64 ---------- */
-static const int8_t  L0_W[64] = {
+static const int16_t L0_W[64] = {
     -127, 127, -127, -127, -127, 127, -127, 127, -127, 127, -127, -127, -127, -127, -127, 127,
     127, 127, -127, -127, 127, 127, -127, 127, -127, 127, 127, -127, -127, -127, -127, 127,
     -127, -127, -127, -127, -127, 127, 127, 127, 127, -127, 127, -127, -127, -127, 127, 127,
@@ -54,7 +55,7 @@ static const float   L0_M[64] = {
 };
 
 /* ---------- L1 (net.2): 64 -> 64 ---------- */
-static const int8_t  L1_W[4096] = {
+static const int16_t L1_W[4096] = {
     -4, -44, -22, -6, -24, 13, 27, -33, 8, 12, 12, 30, 21, 24, 21, -3,
     -34, 0, 25, 0, -5, -37, -110, -69, -5, 21, 34, -48, 23, -30, -8, -65,
     -15, -21, -34, -51, -5, 15, -20, -15, -34, -18, 33, -127, 25, 0, -73, 40,
@@ -337,7 +338,7 @@ static const float   L1_M[64] = {
 };
 
 /* ---------- L2 (net.4): 64 -> 1 ---------- */
-static const int8_t  L2_W[64] = {
+static const int16_t L2_W[64] = {
     -109, 61, 103, -55, 6, -15, 6, 64, -108, 97, 24, 45, 81, -47, -60, -3,
     16, -96, 7, -30, 48, -101, 7, 114, -85, -70, 41, 61, 77, 97, -104, 54,
     73, 42, 89, 2, 28, 62, 96, -98, 4, -47, 38, 55, -75, 67, 127, 94,

@@ -217,7 +217,8 @@ lines.append("")
 lines.append("#include <stdint.h>")
 lines.append("")
 lines.append("typedef struct {")
-lines.append("    const int8_t  *W_q;      /* [out*in], row-major: row = output channel */")
+lines.append("    const int16_t *W_q;      /* [out*in] row-major. Values are int8-range,")
+lines.append("                                stored in 16-bit: C28x has no 8-bit type */")
 lines.append("    const int32_t *b_int;    /* [out], pre-absorbed bias                  */")
 lines.append("    const float   *M;        /* [out], requantization multiplier          */")
 lines.append("    float   S_in,  S_out;")
@@ -237,7 +238,8 @@ for M_ in mcu_layers:
     tag = M_["tag"]
     lines.append("/* ---------- %s (%s): %d -> %d ---------- */"
                  % (tag, L["w"], L["W"].shape[1], L["W"].shape[0]))
-    lines.append("static const int8_t  %s_W[%d] = {" % (tag, L["W"].size))
+    # C28x has no 8-bit type -> store the int8-range values in int16_t
+    lines.append("static const int16_t %s_W[%d] = {" % (tag, L["W"].size))
     lines.append(fmt_ints(L["W"], per_line=16))
     lines.append("};")
     lines.append("static const int32_t %s_B[%d] = {" % (tag, L["b"].size))
