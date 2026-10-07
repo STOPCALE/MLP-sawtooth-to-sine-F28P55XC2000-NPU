@@ -18,6 +18,7 @@
 #include "device.h"
 #include "driverlib.h"
 #include <stdint.h>
+#include "hand_infer.h"
 
 #include "artifacts/tvmgen_default.h"      /* NPU 模型接口 (mod.a 提供) */
 
@@ -35,6 +36,9 @@ volatile uint32_t g_cycles_last = 0;        /* 最近一次推理周期数      
 volatile uint32_t g_cycles_min  = 0xFFFFFFFFu;  /* 最小周期数 (最快一次)    */
 volatile uint32_t g_cycles_max  = 0;        /* 最大周期数 (最慢一次)        */
 volatile float    g_us_last     = 0.0f;     /* 最近一次推理耗时 (微秒)       */
+
+volatile uint32_t g_cycles_cpu = 0;        /* 手写 CPU 推理(1 点)的周期数 */
+volatile float    g_us_cpu     = 0.0f;     /* 手写 CPU 推理(1 点)的微秒数 */
 
 static struct tvmgen_default_inputs  g_npu_in;    /* 模型输入结构 (含指针) */
 static struct tvmgen_default_outputs g_npu_out;   /* 模型输出结构 (含指针) */
@@ -56,6 +60,11 @@ void main(void)
     Board_init();                  // SysConfig 生成 (含 SCI_init: SCIA 115200-8N1-FIFO)
     EINT;
     ERTM;
+
+    // ---- 3.5 手写整数推理自检 (开机一次) ----
+    //   结果看 g_st_maxerr: 期望 ~3.1e-2  (与 PC 端 PTQ 实测一致)
+    //   若变成 1e-1 ~ 1.0 => 魔数取整被编译器优化掉了
+    hand_selftest();
 
     // ---- 2. 计时器初始化: CPUTimer1, SYSCLK 150MHz, 自由递减计数 ----
     CPUTimer1_init();
@@ -89,7 +98,7 @@ void main(void)
             /* 轮询等待 NPU 子图完成 (完成标志由 NPU 中断服务程序置位) */
         }
         t_end = CPUTimer_getTimerCount(CPUTIMER1_BASE);
-
+    
         cycles = t_start - t_end;      // 递减计数: 差值 = 经过周期数 (无符号回绕安全)
         g_cycles_last = cycles;
         if (cycles < g_cycles_min) { g_cycles_min = cycles; }
@@ -102,6 +111,15 @@ void main(void)
         for (k = 0u; k < FRAME; k++) { SCI_sendFloat(g_out[k]); }
         SCI_sendFloat(g_us_last);
         SCI_sendFrameTail();
+        
+        // (b2) 手写 CPU 推理 + 计时 (只推理 1 个点)
+        t_start = CPUTimer_getTimerCount(CPUTIMER1_BASE);
+        g_y_cpu = hand_infer_one(g_in[0]);
+        t_end = CPUTimer_getTimerCount(CPUTIMER1_BASE);
+        g_cycles_cpu = t_start - t_end;
+        g_us_cpu = (float)g_cycles_cpu / SYSCLK_MHZ;
+
+        SCI_sendFloat(g_us_cpu);        /* CH21: 手写 CPU 推理 1 个点的耗时(us) */
     }
 }
 

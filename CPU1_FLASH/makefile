@@ -11,6 +11,7 @@ GEN_CMDS__FLAG :=
 
 ORDERED_OBJS += \
 "./empty_driverlib_main.obj" \
+"./hand_infer.obj" \
 "./syscfg/board.obj" \
 "./syscfg/c2000ware_libraries.obj" \
 "./device/device.obj" \
@@ -137,7 +138,7 @@ all: $(OBJS) $(CMD_SRCS) $(LIB_SRCS) $(GEN_CMDS)
 # Tool invocations
 uart_and_npu.out: $(OBJS) $(CMD_SRCS) $(LIB_SRCS) $(GEN_CMDS)
 	@echo 'C2000 Linker - building target: "$@"'
-	"E:/ccs/ccs/tools/compiler/ti-cgt-c2000_25.11.1.LTS/bin/cl2000" -v28 -ml -mt --cla_support=cla2 --float_support=fpu32 --tmu_support=tmu1 --vcu_support=vcrc -Ooff --define=DEBUG --define=_FLASH --diag_suppress=10063 --diag_warning=225 --diag_wrap=off --display_error_number --gen_func_subsections=on --abi=eabi -z -m"uart_and_npu.map" --heap_size=0x100 --stack_size=0x200 --warn_sections -i"E:/ccs/ccs/tools/compiler/ti-cgt-c2000_25.11.1.LTS/lib" -i"E:/ccs/C2000Ware_26_01_00_00" -i"E:/desk/CCS/uart_and_npu/CPU1_FLASH/syscfg" -i"E:/ccs/ccs/tools/compiler/ti-cgt-c2000_25.11.1.LTS/include" --reread_libs --define=_FLASH --diag_wrap=off --display_error_number --xml_link_info="uart_and_npu_linkInfo.xml" --entry_point=code_start --rom_model -o "uart_and_npu.out" $(ORDERED_OBJS)
+	"E:/ccs/ccs/tools/compiler/ti-cgt-c2000_25.11.1.LTS/bin/cl2000" -v28 -ml -mt --cla_support=cla2 --float_support=fpu32 --tmu_support=tmu1 --vcu_support=vcrc -O2 --define=DEBUG --define=_FLASH --diag_suppress=10063 --diag_warning=225 --diag_wrap=off --display_error_number --gen_func_subsections=on --abi=eabi -z -m"uart_and_npu.map" --heap_size=0x100 --stack_size=0x200 --warn_sections -i"E:/ccs/ccs/tools/compiler/ti-cgt-c2000_25.11.1.LTS/lib" -i"E:/ccs/C2000Ware_26_01_00_00" -i"E:/desk/CCS/uart_and_npu/CPU1_FLASH/syscfg" -i"E:/ccs/ccs/tools/compiler/ti-cgt-c2000_25.11.1.LTS/include" --reread_libs --define=_FLASH --diag_wrap=off --display_error_number --xml_link_info="uart_and_npu_linkInfo.xml" --entry_point=code_start --rom_model -o "uart_and_npu.out" $(ORDERED_OBJS)
 	@echo 'Finished building target: "$@"'
 	@echo ' '
 	@$(MAKE) --no-print-directory post-build

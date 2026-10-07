@@ -28,5 +28,10 @@
       "directory" : "E:/desk/CCS/uart_and_npu/CPU1_FLASH",
       "command"   : "clang++ -I\"E:/desk/CCS/uart_and_npu\" -I\"E:/ccs/C2000Ware_26_01_00_00\" -I\"E:/desk/CCS/uart_and_npu/device\" -I\"E:/ccs/C2000Ware_26_01_00_00/driverlib/f28p55x/driverlib/\" -I\"E:/ccs/ccs/tools/compiler/ti-cgt-c2000_25.11.1.LTS/include\" -DDEBUG -D_FLASH -I\"E:/desk/CCS/uart_and_npu/CPU1_FLASH/syscfg\" -DF28P55x=1 -xc",
       "file"      : "E:/desk/CCS/uart_and_npu/device/f28p55x_npu.c"
+   },
+   {
+      "directory" : "E:/desk/CCS/uart_and_npu/CPU1_FLASH",
+      "command"   : "clang++ -I\"E:/desk/CCS/uart_and_npu\" -I\"E:/ccs/C2000Ware_26_01_00_00\" -I\"E:/desk/CCS/uart_and_npu/device\" -I\"E:/ccs/C2000Ware_26_01_00_00/driverlib/f28p55x/driverlib/\" -I\"E:/ccs/ccs/tools/compiler/ti-cgt-c2000_25.11.1.LTS/include\" -DDEBUG -D_FLASH -I\"E:/desk/CCS/uart_and_npu/CPU1_FLASH/syscfg\" -DF28P55x=1 -xc",
+      "file"      : "E:/desk/CCS/uart_and_npu/hand_infer.c"
    }
 ]
