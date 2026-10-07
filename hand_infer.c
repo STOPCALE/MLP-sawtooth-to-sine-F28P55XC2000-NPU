@@ -47,34 +47,26 @@ static inline int32_t round_nearest_even_f(float x)
 static void hand_quant_layer(const qlayer_mcu_t *L, const int16_t *x, int16_t *q_out)
 {
     /* C1 实验: 循环下标用 16 位 (C28x 的 int/int16_t 就是 16 位).
-     * 汇编依据 (docs/08): int32_t 下标每轮要 4 条循环控制 (MOVB/SUBB/CMPL/B);
-     * 下标最大 = 63*64+63 = 4095, 16 位绰绰有余.
-     * 累加器 acc 仍是 int32_t, 勿动! */
+     * 下标最大 = 63*64+63 = 4095; 累加器 acc 仍是 int32_t, 勿动! */
     int16_t o, i;
-    /* C2 实验: 16x16 乘法 + 零点半减提出内层 (循环不变式).
-     * 范围证明 (int8 语义: x,W_q ∈ [-128,127]; z_in ∈ {0,-128}):
-     *   xs = x[i]-z_in ∈ [-128, 255]  (int16 容得下)
-     *   乘积 ∈ [-32640, 32385] ⊂ int16 -> 16 位乘法无损 */
-    static int16_t xs_buf[64];                  /* in_dim <= 64 */
-    /* C5 实验: 两遍结构 —— 先把整层的整数点积全部算完, 再批量 requant.
-     * 动机 (C4 诊断): 每行 "仪式" ~120 cyc, 其中 requant 的浮点依赖链
-     * (MOV32->I32TOF32->MPYF32->ADDF32->ADDF32->F32TOI32, 每步 4 周期延迟)
-     * 把 6 个 NOP 硬塞进每行; 拆成独立 item 的第二遍, 调度器可重叠延迟 */
+    /* C7 实验: z_in 已折叠进 b_fold (生成器算好 b_int - z_in*rowsum(W_q)),
+     * 预处理遍 (xs_buf) 整段删除, 内层直接用 x 原值.
+     * 范围证明 (int8 语义: x,W_q ∈ [-128,127]):
+     *   乘积 ∈ [-16256, 16129] ⊂ int16 -> 16 位乘法无损 */
+    /* C5 实验: 两遍结构 —— 先把整层的整数点积全部算完, 再批量 requant */
     static int32_t acc_buf[64];
-    for (i = 0; i < L->in_dim; i++)
-        xs_buf[i] = (int16_t)(x[i] - (int16_t)L->z_in);
 
-    /* 第 1 遍: 纯整数点积 (C6: 行进指针; in_dim==1 特化) */
+    /* 第 1 遍: 纯整数点积 (C6: in_dim==1 特化; C7: 直接用 x 与 b_fold) */
     if (L->in_dim == 1)
     {
         /* L0 特化: 每行只 1 个乘法, 免得内层循环/RPT/每行 o*in_dim 索引计算 */
-        const int16_t *wp = L->W_q;
-        const int32_t *bp = L->b_int;
-        int32_t       *ap = acc_buf;
-        const int16_t  x0 = xs_buf[0];
+        const int16_t *wp  = L->W_q;
+        const int32_t *bfp = L->b_fold;
+        int32_t       *ap  = acc_buf;
+        const int16_t  x0  = x[0];
         for (o = 0; o < L->out_dim; o++)
         {
-            *ap++ = *bp++ + (int32_t)(x0 * *wp++);
+            *ap++ = *bfp++ + (int32_t)(x0 * *wp++);
         }
     }
     else
@@ -83,10 +75,10 @@ static void hand_quant_layer(const qlayer_mcu_t *L, const int16_t *x, int16_t *q
         for (o = 0; o < L->out_dim; o++)
         {
             const int16_t *w = &L->W_q[o * L->in_dim];
-            int32_t acc = L->b_int[o];
+            int32_t acc = L->b_fold[o];
             for (i = 0; i < L->in_dim; i++)
             {
-                acc += (int32_t)(xs_buf[i] * w[i]);
+                acc += (int32_t)(x[i] * w[i]);
             }
             acc_buf[o] = acc;
         }

@@ -209,7 +209,8 @@ lines.append(" *      'double' is software-emulated and 10~50x slower")
 lines.append(" *   2) M is precomputed at build time and lives in FLASH")
 lines.append(" *      -- zero runtime init, zero division during inference")
 lines.append(" *   3) S_w is not exported (its information is folded into M) -- saves FLASH")
-lines.append(" *   4) no b_fold (measured: B2 is not worth it)")
+lines.append(" *   4) b_fold IS exported (C7): z_in folded into bias -- the per-layer")
+lines.append(" *      zero-point prepass (xs_buf) is gone on the MCU; MAC reads x directly")
 lines.append(" *   5) W_q lives in GS RAM (C3): boot copies it from FLASH via .cinit")
 lines.append(" *      -- RAM reads avoid FLASH data-wait states inside the MAC loop")
 lines.append(" */")
@@ -222,6 +223,7 @@ lines.append("typedef struct {")
 lines.append("    const int16_t *W_q;      /* [out*in] row-major. Values are int8-range,")
 lines.append("                                stored in 16-bit: C28x has no 8-bit type */")
 lines.append("    const int32_t *b_int;    /* [out], pre-absorbed bias                  */")
+lines.append("    const int32_t *b_fold;   /* [out], b_int - z_in*rowsum(W_q)  (C7)     */")
 lines.append("    const float   *M;        /* [out], requantization multiplier          */")
 lines.append("    float   S_in,  S_out;")
 lines.append("    int32_t z_in,  z_out;")
@@ -253,6 +255,10 @@ for M_ in mcu_layers:
     lines.append("static const int32_t %s_B[%d] = {" % (tag, L["b"].size))
     lines.append(fmt_ints(L["b"], per_line=8))
     lines.append("};")
+    lines.append("static const int32_t %s_BF[%d] = {   /* C7: b_int - z_in*rowsum(W_q) */"
+                 % (tag, L["bf"].size))
+    lines.append(fmt_ints(L["bf"], per_line=8))
+    lines.append("};")
     lines.append("static const float   %s_M[%d] = {" % (tag, M_["M"].size))
     lines.append(fmt_floats(M_["M"]))
     lines.append("};")
@@ -262,8 +268,8 @@ lines.append("static const qlayer_mcu_t LAYERS_MCU[3] = {")
 for M_ in mcu_layers:
     L = M_["L"]
     tag = M_["tag"]
-    lines.append("    { %s_W, %s_B, %s_M, %.9gf, %.9gf, %d, %d, %d, %d },"
-                 % (tag, tag, tag, L["s_in"], L["s_out"], L["z_in"], L["z_out"],
+    lines.append("    { %s_W, %s_B, %s_BF, %s_M, %.9gf, %.9gf, %d, %d, %d, %d },"
+                 % (tag, tag, tag, tag, L["s_in"], L["s_out"], L["z_in"], L["z_out"],
                     L["W"].shape[1], L["W"].shape[0]))
 lines.append("};")
 lines.append("")
