@@ -37,8 +37,9 @@ volatile uint32_t g_cycles_min  = 0xFFFFFFFFu;  /* 最小周期数 (最快一次
 volatile uint32_t g_cycles_max  = 0;        /* 最大周期数 (最慢一次)        */
 volatile float    g_us_last     = 0.0f;     /* 最近一次推理耗时 (微秒)       */
 
-volatile uint32_t g_cycles_cpu = 0;        /* 手写 CPU 推理(1 点)的周期数 */
-volatile float    g_us_cpu     = 0.0f;     /* 手写 CPU 推理(1 点)的微秒数 */
+volatile uint32_t g_cycles_cpu = 0;        /* 手写 CPU 推理(10 点)的周期数 */
+volatile float    g_us_cpu     = 0.0f;     /* 手写 CPU 推理(10 点)的微秒数 */
+static   float    g_ycpu[FRAME];           /* 手写 CPU 推理的 10 点输出 (与 NPU 的 g_out 同口径) */
 
 static struct tvmgen_default_inputs  g_npu_in;    /* 模型输入结构 (含指针) */
 static struct tvmgen_default_outputs g_npu_out;   /* 模型输出结构 (含指针) */
@@ -106,27 +107,31 @@ void main(void)
         g_us_last = (float)cycles / SYSCLK_MHZ;    // 周期数 -> 微秒
         g_frame_count++;
 
-        // (b2) 手写 CPU 推理 + 计时 (只推理 1 个点)
+        // (b2) 手写 CPU 推理 + 计时 -- 10 个点, 与 NPU 同口径可直接比较
         t_start = CPUTimer_getTimerCount(CPUTIMER1_BASE);
-        g_y_cpu = hand_infer_one(g_in[0]);
+        for (k = 0u; k < FRAME; k++)
+        {
+            g_ycpu[k] = hand_infer_one(g_in[k]);
+        }
         t_end = CPUTimer_getTimerCount(CPUTIMER1_BASE);
         g_cycles_cpu = t_start - t_end;
         g_us_cpu = (float)g_cycles_cpu / SYSCLK_MHZ;
+        g_y_cpu  = g_ycpu[FRAME - 1];       /* 供 CCS Expressions 观察 */
 
         // (c) 发送一帧 (VOFA+ JustFloat)
         //     铁律: 所有数据必须在帧尾之前, 否则下一帧整体错位一格!
         //     CH0 ..CH9   锯齿波输入
         //     CH10..CH19  NPU 输出 (正弦)
         //     CH20        NPU 一次推理(10 个点)耗时 [us]
-        //     CH21        手写 CPU 推理(1 个点)耗时 [us]
+        //     CH21        手写 CPU 一次推理(10 个点)耗时 [us]   <-- 与 CH20 同口径
         //     CH22        自检最大误差 (期望 ~3.1e-2; 若 0.1~1.0 => 魔数被优化折叠)
-        //     CH23        手写 CPU 推理输出 y (可与 CH10..CH19 对比看波形)
+        //     CH23..CH32  手写 CPU 的 10 点输出                    <-- 与 CH10..19 逐点对比
         for (k = 0u; k < FRAME; k++) { SCI_sendFloat(g_in[k]);  }
         for (k = 0u; k < FRAME; k++) { SCI_sendFloat(g_out[k]); }
         SCI_sendFloat(g_us_last);
         SCI_sendFloat(g_us_cpu);
         SCI_sendFloat(g_st_maxerr);
-        SCI_sendFloat(g_y_cpu);
+        for (k = 0u; k < FRAME; k++) { SCI_sendFloat(g_ycpu[k]); }
         SCI_sendFrameTail();
     }
 }
