@@ -210,6 +210,8 @@ lines.append(" *   2) M is precomputed at build time and lives in FLASH")
 lines.append(" *      -- zero runtime init, zero division during inference")
 lines.append(" *   3) S_w is not exported (its information is folded into M) -- saves FLASH")
 lines.append(" *   4) no b_fold (measured: B2 is not worth it)")
+lines.append(" *   5) W_q lives in GS RAM (C3): boot copies it from FLASH via .cinit")
+lines.append(" *      -- RAM reads avoid FLASH data-wait states inside the MAC loop")
 lines.append(" */")
 lines.append("#ifndef QUANT_PARAMS_MCU_H")
 lines.append("#define QUANT_PARAMS_MCU_H")
@@ -239,7 +241,13 @@ for M_ in mcu_layers:
     lines.append("/* ---------- %s (%s): %d -> %d ---------- */"
                  % (tag, L["w"], L["W"].shape[1], L["W"].shape[0]))
     # C28x has no 8-bit type -> store the int8-range values in int16_t
-    lines.append("static const int16_t %s_W[%d] = {" % (tag, L["W"].size))
+    # C3: W_q -> GS RAM. 大的层占 ramgs1 (8KB), 小的放 ramgs2; GS3 被 NPU 占用勿动!
+    w_bytes = L["W"].size * 2
+    w_sec = "ramgs1" if w_bytes >= 4096 else "ramgs2"
+    lines.append("#if defined(__TI_COMPILER_VERSION__)   /* gcc 不认识这个 pragma */")
+    lines.append('#pragma DATA_SECTION(%s_W, "%s")' % (tag, w_sec))
+    lines.append("#endif")
+    lines.append("static int16_t %s_W[%d] = {" % (tag, L["W"].size))
     lines.append(fmt_ints(L["W"], per_line=16))
     lines.append("};")
     lines.append("static const int32_t %s_B[%d] = {" % (tag, L["b"].size))
