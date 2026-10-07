@@ -56,19 +56,40 @@ static void hand_quant_layer(const qlayer_mcu_t *L, const int16_t *x, int16_t *q
      *   xs = x[i]-z_in ∈ [-128, 255]  (int16 容得下)
      *   乘积 ∈ [-32640, 32385] ⊂ int16 -> 16 位乘法无损 */
     static int16_t xs_buf[64];                  /* in_dim <= 64 */
+    /* C5 实验: 两遍结构 —— 先把整层的整数点积全部算完, 再批量 requant.
+     * 动机 (C4 诊断): 每行 "仪式" ~120 cyc, 其中 requant 的浮点依赖链
+     * (MOV32->I32TOF32->MPYF32->ADDF32->ADDF32->F32TOI32, 每步 4 周期延迟)
+     * 把 6 个 NOP 硬塞进每行; 拆成独立 item 的第二遍, 调度器可重叠延迟 */
+    static int32_t acc_buf[64];
     for (i = 0; i < L->in_dim; i++)
         xs_buf[i] = (int16_t)(x[i] - (int16_t)L->z_in);
+
+    /* 第 1 遍: 纯整数点积 (期待仍被编成 RPT + MAC) */
     for (o = 0; o < L->out_dim; o++)
     {
+        const int16_t *w = &L->W_q[o * L->in_dim];
         int32_t acc = L->b_int[o];
         for (i = 0; i < L->in_dim; i++)
         {
-            acc += (int32_t)(xs_buf[i] * L->W_q[o * L->in_dim + i]);
+            acc += (int32_t)(xs_buf[i] * w[i]);
         }
-        int32_t r = round_nearest_even_f((float)acc * L->M[o]) + L->z_out;
-        if (r < -128) r = -128;
-        if (r >  127) r =  127;
-        q_out[o] = (int16_t)r;          /* int8 值存 16 位容器 (C28x 无 8 位类型) */
+        acc_buf[o] = acc;
+    }
+
+    /* 第 2 遍: 批量 requant (独立 item; C5a: 单加魔数, 整数域再减去它) */
+    {
+        const float   *Mp = L->M;
+        const int32_t *ap = acc_buf;
+        int16_t       *qp = q_out;
+        const int32_t  zm = L->z_out - 12582912;  /* z_out - MAGIC, 一次算好 */
+        for (o = 0; o < L->out_dim; o++)
+        {
+            /* (int32_t)(y + 1.5*2^23) 截断 = 12582912 + round_even(y), 范围 |y|<2^22 */
+            int32_t r = (int32_t)((float)(*ap++) * (*Mp++) + 12582912.0f) + zm;
+            if (r < -128) r = -128;
+            if (r >  127) r =  127;
+            *qp++ = (int16_t)r;         /* int8 值存 16 位容器 (C28x 无 8 位类型) */
+        }
     }
 }
 
