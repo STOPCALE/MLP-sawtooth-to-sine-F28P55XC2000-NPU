@@ -12,13 +12,25 @@
             "label": "构建 CPU1_FLASH",
             "type": "shell",
             "command": "E:\\ccs\\ccs\\utils\\bin\\gmake.exe",
-            "args": ["-C", "CPU1_FLASH", "all"],
-            "options": { "cwd": "${workspaceFolder}" },
-            "group": { "kind": "build", "isDefault": true },
+            "args": [
+                "-C",
+                "CPU1_FLASH",
+                "all"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
             "problemMatcher": [
                 {
                     "owner": "ti-c2000-flash",
-                    "fileLocation": ["relative", "${workspaceFolder}/CPU1_FLASH"],
+                    "fileLocation": [
+                        "relative",
+                        "${workspaceFolder}/CPU1_FLASH"
+                    ],
                     "pattern": {
                         "regexp": "^\"([^\"]+)\", line (\\d+): (fatal error|error|warning) #(\\d+)(?:-[A-Z])?: (.*)$",
                         "file": 1,
@@ -29,19 +41,33 @@
                     }
                 }
             ],
-            "presentation": { "panel": "shared", "clear": true }
+            "presentation": {
+                "panel": "shared",
+                "clear": true
+            }
         },
         {
             "label": "构建 CPU1_RAM",
             "type": "shell",
             "command": "E:\\ccs\\ccs\\utils\\bin\\gmake.exe",
-            "args": ["-C", "CPU1_RAM", "all"],
-            "options": { "cwd": "${workspaceFolder}" },
-            "group": { "kind": "build" },
+            "args": [
+                "-C",
+                "CPU1_RAM",
+                "all"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "group": {
+                "kind": "build"
+            },
             "problemMatcher": [
                 {
                     "owner": "ti-c2000-ram",
-                    "fileLocation": ["relative", "${workspaceFolder}/CPU1_RAM"],
+                    "fileLocation": [
+                        "relative",
+                        "${workspaceFolder}/CPU1_RAM"
+                    ],
                     "pattern": {
                         "regexp": "^\"([^\"]+)\", line (\\d+): (fatal error|error|warning) #(\\d+)(?:-[A-Z])?: (.*)$",
                         "file": 1,
@@ -52,22 +78,37 @@
                     }
                 }
             ],
-            "presentation": { "panel": "shared", "clear": true }
+            "presentation": {
+                "panel": "shared",
+                "clear": true
+            }
         },
         {
             "label": "清理 CPU1_FLASH",
             "type": "shell",
             "command": "E:\\ccs\\ccs\\utils\\bin\\gmake.exe",
-            "args": ["-C", "CPU1_FLASH", "clean"],
-            "options": { "cwd": "${workspaceFolder}" },
+            "args": [
+                "-C",
+                "CPU1_FLASH",
+                "clean"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
             "problemMatcher": []
         },
         {
             "label": "清理 CPU1_RAM",
             "type": "shell",
             "command": "E:\\ccs\\ccs\\utils\\bin\\gmake.exe",
-            "args": ["-C", "CPU1_RAM", "clean"],
-            "options": { "cwd": "${workspaceFolder}" },
+            "args": [
+                "-C",
+                "CPU1_RAM",
+                "clean"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
             "problemMatcher": []
         },
         {
@@ -79,7 +120,9 @@
                 "--config=${workspaceFolder}\\TMS320F28P550SJ9_LaunchPad.ccxml",
                 "${workspaceFolder}\\CPU1_FLASH\\uart_and_npu.out"
             ],
-            "options": { "cwd": "${workspaceFolder}" },
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
             "dependsOn": "构建 CPU1_FLASH",
             "dependsOrder": "sequence",
             "problemMatcher": []
@@ -93,7 +136,9 @@
                 "--config=${workspaceFolder}\\TMS320F28P550SJ9_LaunchPad.ccxml",
                 "${workspaceFolder}\\CPU1_RAM\\uart_and_npu.out"
             ],
-            "options": { "cwd": "${workspaceFolder}" },
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
             "dependsOn": "构建 CPU1_RAM",
             "dependsOrder": "sequence",
             "problemMatcher": []
