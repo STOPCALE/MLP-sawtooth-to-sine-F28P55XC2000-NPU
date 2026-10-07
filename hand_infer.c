@@ -56,32 +56,36 @@ static void hand_quant_layer(const qlayer_mcu_t *L, const int16_t *x, int16_t *q
     /* C5 实验: 两遍结构 —— 先把整层的整数点积全部算完, 再批量 requant */
     static int32_t acc_buf[64];
 
-    /* 第 1 遍: 纯整数点积 (C6: in_dim==1 特化; C7: 直接用 x 与 b_fold) */
+    /* C10: in_dim==1 一行到底 —— 点积+requant 合并, 免 acc_buf 往返 */
     if (L->in_dim == 1)
     {
-        /* L0 特化: 每行只 1 个乘法, 免得内层循环/RPT/每行 o*in_dim 索引计算 */
         const int16_t *wp  = L->W_q;
         const int32_t *bfp = L->b_fold;
-        int32_t       *ap  = acc_buf;
+        const float   *Mp  = L->M;
+        int16_t       *qp  = q_out;
         const int16_t  x0  = x[0];
+        const int32_t  zm  = L->z_out - 12582912;
         for (o = 0; o < L->out_dim; o++)
         {
-            *ap++ = *bfp++ + (int32_t)(x0 * *wp++);
+            int32_t acc = *bfp++ + (int32_t)(x0 * *wp++);
+            int32_t r = (int32_t)((float)acc * (*Mp++) + 12582912.0f) + zm;
+            if (r < -128) r = -128;
+            if (r >  127) r =  127;
+            *qp++ = (int16_t)r;
         }
+        return;
     }
-    else
+
+    /* 第 1 遍: 通用路径纯整数点积 (C5 版结构; 行进指针改写实测更慢已回滚) */
+    for (o = 0; o < L->out_dim; o++)
     {
-        /* 通用路径: 实测行进指针改写反而慢 4.5% (L1) -> 保留 C5 版结构 */
-        for (o = 0; o < L->out_dim; o++)
+        const int16_t *w = &L->W_q[o * L->in_dim];
+        int32_t acc = L->b_fold[o];
+        for (i = 0; i < L->in_dim; i++)
         {
-            const int16_t *w = &L->W_q[o * L->in_dim];
-            int32_t acc = L->b_fold[o];
-            for (i = 0; i < L->in_dim; i++)
-            {
-                acc += (int32_t)(x[i] * w[i]);
-            }
-            acc_buf[o] = acc;
+            acc += (int32_t)(x[i] * w[i]);
         }
+        acc_buf[o] = acc;
     }
 
     /* 第 2 遍: 批量 requant (独立 item; C5a: 单加魔数, 整数域再减去它) */

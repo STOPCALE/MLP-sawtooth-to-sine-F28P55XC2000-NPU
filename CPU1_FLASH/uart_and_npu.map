@@ -1,7 +1,7 @@
 ******************************************************************************
              TMS320C2000 Linker PC v25.11.1                    
 ******************************************************************************
->> Linked Wed Oct  7 21:15:30 2026
+>> Linked Wed Oct  7 21:20:17 2026
 
 OUTPUT FILE NAME:   <uart_and_npu.out>
 ENTRY POINT SYMBOL: "code_start"  address: 00080000
@@ -33,7 +33,7 @@ MEMORY CONFIGURATION
   RAMLS8                00014000   00002000  00000000  00002000  RWIX
   RAMLS9                00016000   00002000  00000000  00002000  RWIX
   BEGIN                 00080000   00000002  00000002  00000000  RWIX
-  FLASH_BANK0           00080002   0001fffe  00003b54  0001c4aa  RWIX
+  FLASH_BANK0           00080002   0001fffe  00003b7e  0001c480  RWIX
   FLASH_BANK1           000a0000   00020000  00000000  00020000  RWIX
   FLASH_BANK2           000c0000   00020000  00000000  00020000  RWIX
   FLASH_BANK3           000e0000   00020000  00000000  00020000  RWIX
@@ -50,15 +50,15 @@ codestart
 *          0    00080000    00000002     
                   00080000    00000002     f28p55x_codestartbranch.obj (codestart)
 
-.cinit     0    00082ad8    00001090     
-                  00082ad8    00001004     (.cinit.ramgs1.load) [load image]
-                  00083adc    00000059     (.cinit.ramgs2.load) [load image, compression = lzss]
-                  00083b35    00000010     (.cinit..data.load) [load image, compression = lzss]
-                  00083b45    00000001     --HOLE-- [fill = 0]
-                  00083b46    00000006     (__TI_handler_table)
-                  00083b4c    00000004     (.cinit..bss.load) [load image, compression = zero_init]
-                  00083b50    00000004     (.cinit..bss.noinit.tvm.load) [load image, compression = zero_init]
-                  00083b54    00000014     (__TI_cinit_table)
+.cinit     0    00082b00    00001090     
+                  00082b00    00001004     (.cinit.ramgs1.load) [load image]
+                  00083b04    00000059     (.cinit.ramgs2.load) [load image, compression = lzss]
+                  00083b5d    00000010     (.cinit..data.load) [load image, compression = lzss]
+                  00083b6d    00000001     --HOLE-- [fill = 0]
+                  00083b6e    00000006     (__TI_handler_table)
+                  00083b74    00000004     (.cinit..bss.load) [load image, compression = zero_init]
+                  00083b78    00000004     (.cinit..bss.noinit.tvm.load) [load image, compression = zero_init]
+                  00083b7c    00000014     (__TI_cinit_table)
 
 .reset     0    003fffc0    00000000     DSECT
 
@@ -148,7 +148,7 @@ ramgs2     0    00010000    00000080     UNINITIALIZED
 .text.1    0    00081178    00000008     
                   00081178    00000008     rts2800_fpu32_eabi.lib : copy_decompress_none.c.obj (.text:decompress:none)
 
-.text.2    0    000814a0    00001631     
+.text.2    0    000814a0    0000165b     
                   000814a0    00000123     driverlib.lib : sysctl.obj (.text:SysCtl_setClock)
                   000815c3    000000fe                   : sysctl.obj (.text:SysCtl_isPLLValid)
                   000816c1    000000f3     mod.a : tinie_c28.obj (.text:write_configMMR)
@@ -157,107 +157,108 @@ ramgs2     0    00010000    00000080     UNINITIALIZED
                   0008197e    000000df     mod.a : lib1.obj (.text:tvmgen_default_fused_nn_conv2d_add_multiply_right_shift_clip_cast)
                   00081a5d    000000d4     empty_driverlib_main.obj (.text:main)
                   00081b31    000000d3     device.obj (.text:Device_init)
-                  00081c04    00000088     rts2800_fpu32_eabi.lib : fs_div28.asm.obj (.text)
-                  00081c8c    0000007f     driverlib.lib : interrupt.obj (.text:Interrupt_clearIFR)
-                  00081d0b    0000007d     hand_infer.obj (.text:hand_quant_layer)
-                  00081d88    00000075     board.obj (.text:mySCI0_init)
-                  00081dfd    00000073     driverlib.lib : sysctl.obj (.text:DCC_setCounterSeeds)
-                  00081e70    0000006e     mod.a : lib1.obj (.text:tvmgen_default_fused_nn_conv2d_subtract_add_right_shift_clip_cast_multiply)
-                  00081ede    00000067           : lib2.obj (.text:tvmgen_default_ti_npu_convolve1x1NHWC_0)
-                  00081f45    00000066     rts2800_fpu32_eabi.lib : s_sinf.c.obj (.text)
-                  00081fab    00000065     driverlib.lib : sysctl.obj (.text:SysCtl_getClock)
-                  00082010    00000065     hand_infer.obj (.text:hand_infer_one)
-                  00082075    00000065     mod.a : lib1.obj (.text:tvmgen_default_IRQHandlerHelper)
-                  000820da    00000059     rts2800_fpu32_eabi.lib : s_floorf.c.obj (.text)
-                  00082133    00000052     driverlib.lib : gpio.obj (.text:GPIO_setPadConfig)
-                  00082185    0000004e                   : interrupt.obj (.text:Interrupt_disable)
-                  000821d3    0000004b     hand_infer.obj (.text:hand_selftest)
-                  0008221e    00000049     f28p55x_npu.obj (.text:NPU_setInstrMem)
-                  00082267    00000001     rts2800_fpu32_eabi.lib : startup.c.obj (.text)
-                  00082268    00000049     f28p55x_npu.obj (.text:NPU_setParamMem)
-                  000822b1    00000047     driverlib.lib : sysctl.obj (.text:SysCtl_selectOscSource)
-                  000822f8    00000046                   : sysctl.obj (.text:SysCtl_selectXTAL)
-                  0008233e    00000045                   : sci.obj (.text:SCI_clearInterruptStatus)
-                  00082383    00000044                   : pga.obj (.text:PGA_setOffsetTrimPMOS)
-                  000823c7    00000041                   : pga.obj (.text:PGA_setOffsetTrimNMOS)
-                  00082408    00000040                   : sysctl.obj (.text:SysCtl_pollX1Counter)
-                  00082448    0000003e                   : sci.obj (.text:SCI_setConfig)
-                  00082486    0000003d                   : interrupt.obj (.text:Interrupt_initModule)
-                  000824c3    00000037                   : gpio.obj (.text:GPIO_setPinConfig)
-                  000824fa    00000037                   : gpio.obj (.text:GPIO_setQualificationMode)
-                  00082531    00000037                   : interrupt.obj (.text:Interrupt_enable)
-                  00082568    00000036     empty_driverlib_main.obj (.text:SCI_sendFloat)
-                  0008259e    00000034     mod.a : lib1.obj (.text:tvmgen_default_fused_cast_add_cast_cast)
-                  000825d2    0000002e     rts2800_fpu32_eabi.lib : copy_decompress_lzss.c.obj (.text:decompress:lzss)
-                  00082600    0000002d     mod.a : lib1.obj (.text:tvmgen_default_IRQHandler)
-                  0008262d    0000002c     driverlib.lib : gpio.obj (.text:GPIO_isPinValid)
-                  00082659    0000002b     rts2800_fpu32_eabi.lib : autoinit.c.obj (.text:__TI_auto_init_nobinit_nopinit)
-                  00082684    0000002b     mod.a : lib1.obj (.text:tvmgen_default___tvm_main__)
-                  000826af    0000002a           : lib1.obj (.text:tvmgen_default_fused_multiply_add_floor_clip_cast_reshape_cast)
-                  000826d9    00000029     rts2800_fpu32_eabi.lib : exit.c.obj (.text)
-                  00082702    00000026     empty_driverlib_main.obj (.text:CPUTimer1_init)
-                  00082728    00000025     empty_driverlib_main.obj (.text:SCI_sendFrameTail)
-                  0008274d    00000025     driverlib.lib : sysctl.obj (.text:SysCtl_selectXTALSingleEnded)
-                  00082772    00000024                   : sysctl.obj (.text:DCC_enableSingleShotMode)
-                  00082796    00000023     board.obj (.text:PinMux_init)
-                  000827b9    00000020     rts2800_fpu32_eabi.lib : memcpy.c.obj (.text)
-                  000827d9    0000001e     driverlib.lib : sysctl.obj (.text:DCC_setCounter0ClkSource)
-                  000827f7    0000001e                   : sysctl.obj (.text:DCC_setCounter1ClkSource)
-                  00082815    0000001e                   : interrupt.obj (.text:Interrupt_initVectorTable)
-                  00082833    0000001c     mod.a : lib1.obj (.text:tinie_sublayer_IRQHandler)
-                  0008284f    0000001a     driverlib.lib : sysctl.obj (.text:SysCtl_getLowSpeedClock)
-                  00082869    00000019                   : sysctl.obj (.text:SysCtl_setPLLSysClk)
-                  00082882    00000019     mod.a : tinie_c28.obj (.text:TINIE_setup)
-                  0008289b    00000018     f28p55x_npu.obj (.text:NPU_setInterruptHandler)
-                  000828b3    00000018     driverlib.lib : sci.obj (.text:SCI_disableModule)
-                  000828cb    00000018                   : sci.obj (.text:SCI_performSoftwareReset)
-                  000828e3    00000017                   : pga.obj (.text:PGA_isBaseValid)
-                  000828fa    00000017                   : sci.obj (.text:SCI_isBaseValid)
-                  00082911    00000017                   : sysctl.obj (.text:SysCtl_enablePeripheral)
-                  00082928    00000017     rts2800_fpu32_eabi.lib : boot28.asm.obj (.text)
-                  0008293f    00000016     driverlib.lib : sysctl.obj (.text:DCC_disableDoneSignal)
-                  00082955    00000016                   : interrupt.obj (.text:Interrupt_defaultHandler)
-                  0008296b    00000015                   : sysctl.obj (.text:DCC_clearDoneFlag)
-                  00082980    00000015                   : sysctl.obj (.text:DCC_clearErrorFlag)
-                  00082995    00000015                   : sysctl.obj (.text:DCC_disableErrorSignal)
-                  000829aa    00000015                   : sysctl.obj (.text:DCC_isBaseValid)
-                  000829bf    00000014                   : sysctl.obj (.text:DCC_disableModule)
-                  000829d3    00000014                   : sysctl.obj (.text:DCC_enableModule)
-                  000829e7    00000013                   : sci.obj (.text:SCI_enableModule)
-                  000829fa    00000012     rts2800_fpu32_eabi.lib : args_main.c.obj (.text)
-                  00082a0c    00000010     driverlib.lib : flash.obj (.text:Flash_isCtrlBaseValid)
-                  00082a1c    00000010                   : flash.obj (.text:Flash_isECCBaseValid)
-                  00082a2c    0000000d                   : interrupt.obj (.text:Interrupt_disableGlobal)
-                  00082a39    0000000d                   : interrupt.obj (.text:Interrupt_enableGlobal)
-                  00082a46    0000000d     mod.a : lib0.obj (.text:tvmgen_default_run)
-                  00082a53    0000000b     driverlib.lib : sysctl.obj (.text:SysCtl_isMCDClockFailureDetected)
-                  00082a5e    0000000a                   : interrupt.obj (.text:Interrupt_illegalOperationHandler)
-                  00082a68    0000000a                   : interrupt.obj (.text:Interrupt_nmiHandler)
-                  00082a72    0000000a     mod.a : lib1.obj (.text:tvmgen_default_fused_tinie_c28_pack)
-                  00082a7c    0000000a           : lib1.obj (.text:tvmgen_default_fused_tinie_c28_unpack)
-                  00082a86    00000009     board.obj (.text:Board_init)
-                  00082a8f    00000009     rts2800_fpu32_eabi.lib : _lock.c.obj (.text)
-                  00082a98    00000008     f28p55x_codestartbranch.obj (.text)
-                  00082aa0    00000007     driverlib.lib : sysctl.obj (.text:SysCtl_resetMCD)
-                  00082aa7    00000007     rts2800_fpu32_eabi.lib : memset.c.obj (.text)
-                  00082aae    00000006     f28p55x_npu.obj (.text:NPU_enableInterrupt)
-                  00082ab4    00000006     mod.a : tinie_c28.obj (.text:TINIE_start)
-                  00082aba    00000006     rts2800_fpu32_eabi.lib : copy_zero_init.c.obj (.text:decompress:ZI)
-                  00082ac0    00000005     f28p55x_npu.obj (.text:NPU_clearInterruptACK)
-                  00082ac5    00000004     f28p55x_npu.obj (.text:NPU_getCtlReg)
-                  00082ac9    00000003     board.obj (.text:NPU_init)
-                  00082acc    00000003     device.obj (.text:__error__)
-                  00082acf    00000002     rts2800_fpu32_eabi.lib : pre_init.c.obj (.text)
+                  00081c04    000000a6     hand_infer.obj (.text:hand_quant_layer)
+                  00081caa    00000088     rts2800_fpu32_eabi.lib : fs_div28.asm.obj (.text)
+                  00081d32    0000007f     driverlib.lib : interrupt.obj (.text:Interrupt_clearIFR)
+                  00081db1    00000075     board.obj (.text:mySCI0_init)
+                  00081e26    00000073     driverlib.lib : sysctl.obj (.text:DCC_setCounterSeeds)
+                  00081e99    00000001     rts2800_fpu32_eabi.lib : startup.c.obj (.text)
+                  00081e9a    0000006e     mod.a : lib1.obj (.text:tvmgen_default_fused_nn_conv2d_subtract_add_right_shift_clip_cast_multiply)
+                  00081f08    00000067           : lib2.obj (.text:tvmgen_default_ti_npu_convolve1x1NHWC_0)
+                  00081f6f    00000066     rts2800_fpu32_eabi.lib : s_sinf.c.obj (.text)
+                  00081fd5    00000065     driverlib.lib : sysctl.obj (.text:SysCtl_getClock)
+                  0008203a    00000065     hand_infer.obj (.text:hand_infer_one)
+                  0008209f    00000065     mod.a : lib1.obj (.text:tvmgen_default_IRQHandlerHelper)
+                  00082104    00000059     rts2800_fpu32_eabi.lib : s_floorf.c.obj (.text)
+                  0008215d    00000052     driverlib.lib : gpio.obj (.text:GPIO_setPadConfig)
+                  000821af    0000004e                   : interrupt.obj (.text:Interrupt_disable)
+                  000821fd    0000004b     hand_infer.obj (.text:hand_selftest)
+                  00082248    00000049     f28p55x_npu.obj (.text:NPU_setInstrMem)
+                  00082291    00000001     --HOLE-- [fill = 0]
+                  00082292    00000049     f28p55x_npu.obj (.text:NPU_setParamMem)
+                  000822db    00000047     driverlib.lib : sysctl.obj (.text:SysCtl_selectOscSource)
+                  00082322    00000046                   : sysctl.obj (.text:SysCtl_selectXTAL)
+                  00082368    00000045                   : sci.obj (.text:SCI_clearInterruptStatus)
+                  000823ad    00000044                   : pga.obj (.text:PGA_setOffsetTrimPMOS)
+                  000823f1    00000041                   : pga.obj (.text:PGA_setOffsetTrimNMOS)
+                  00082432    00000040                   : sysctl.obj (.text:SysCtl_pollX1Counter)
+                  00082472    0000003e                   : sci.obj (.text:SCI_setConfig)
+                  000824b0    0000003d                   : interrupt.obj (.text:Interrupt_initModule)
+                  000824ed    00000037                   : gpio.obj (.text:GPIO_setPinConfig)
+                  00082524    00000037                   : gpio.obj (.text:GPIO_setQualificationMode)
+                  0008255b    00000037                   : interrupt.obj (.text:Interrupt_enable)
+                  00082592    00000036     empty_driverlib_main.obj (.text:SCI_sendFloat)
+                  000825c8    00000034     mod.a : lib1.obj (.text:tvmgen_default_fused_cast_add_cast_cast)
+                  000825fc    0000002e     rts2800_fpu32_eabi.lib : copy_decompress_lzss.c.obj (.text:decompress:lzss)
+                  0008262a    0000002d     mod.a : lib1.obj (.text:tvmgen_default_IRQHandler)
+                  00082657    0000002c     driverlib.lib : gpio.obj (.text:GPIO_isPinValid)
+                  00082683    0000002b     rts2800_fpu32_eabi.lib : autoinit.c.obj (.text:__TI_auto_init_nobinit_nopinit)
+                  000826ae    0000002b     mod.a : lib1.obj (.text:tvmgen_default___tvm_main__)
+                  000826d9    0000002a           : lib1.obj (.text:tvmgen_default_fused_multiply_add_floor_clip_cast_reshape_cast)
+                  00082703    00000029     rts2800_fpu32_eabi.lib : exit.c.obj (.text)
+                  0008272c    00000026     empty_driverlib_main.obj (.text:CPUTimer1_init)
+                  00082752    00000025     empty_driverlib_main.obj (.text:SCI_sendFrameTail)
+                  00082777    00000025     driverlib.lib : sysctl.obj (.text:SysCtl_selectXTALSingleEnded)
+                  0008279c    00000024                   : sysctl.obj (.text:DCC_enableSingleShotMode)
+                  000827c0    00000023     board.obj (.text:PinMux_init)
+                  000827e3    00000020     rts2800_fpu32_eabi.lib : memcpy.c.obj (.text)
+                  00082803    0000001e     driverlib.lib : sysctl.obj (.text:DCC_setCounter0ClkSource)
+                  00082821    0000001e                   : sysctl.obj (.text:DCC_setCounter1ClkSource)
+                  0008283f    0000001e                   : interrupt.obj (.text:Interrupt_initVectorTable)
+                  0008285d    0000001c     mod.a : lib1.obj (.text:tinie_sublayer_IRQHandler)
+                  00082879    0000001a     driverlib.lib : sysctl.obj (.text:SysCtl_getLowSpeedClock)
+                  00082893    00000019                   : sysctl.obj (.text:SysCtl_setPLLSysClk)
+                  000828ac    00000019     mod.a : tinie_c28.obj (.text:TINIE_setup)
+                  000828c5    00000018     f28p55x_npu.obj (.text:NPU_setInterruptHandler)
+                  000828dd    00000018     driverlib.lib : sci.obj (.text:SCI_disableModule)
+                  000828f5    00000018                   : sci.obj (.text:SCI_performSoftwareReset)
+                  0008290d    00000017                   : pga.obj (.text:PGA_isBaseValid)
+                  00082924    00000017                   : sci.obj (.text:SCI_isBaseValid)
+                  0008293b    00000017                   : sysctl.obj (.text:SysCtl_enablePeripheral)
+                  00082952    00000017     rts2800_fpu32_eabi.lib : boot28.asm.obj (.text)
+                  00082969    00000016     driverlib.lib : sysctl.obj (.text:DCC_disableDoneSignal)
+                  0008297f    00000016                   : interrupt.obj (.text:Interrupt_defaultHandler)
+                  00082995    00000015                   : sysctl.obj (.text:DCC_clearDoneFlag)
+                  000829aa    00000015                   : sysctl.obj (.text:DCC_clearErrorFlag)
+                  000829bf    00000015                   : sysctl.obj (.text:DCC_disableErrorSignal)
+                  000829d4    00000015                   : sysctl.obj (.text:DCC_isBaseValid)
+                  000829e9    00000014                   : sysctl.obj (.text:DCC_disableModule)
+                  000829fd    00000014                   : sysctl.obj (.text:DCC_enableModule)
+                  00082a11    00000013                   : sci.obj (.text:SCI_enableModule)
+                  00082a24    00000012     rts2800_fpu32_eabi.lib : args_main.c.obj (.text)
+                  00082a36    00000010     driverlib.lib : flash.obj (.text:Flash_isCtrlBaseValid)
+                  00082a46    00000010                   : flash.obj (.text:Flash_isECCBaseValid)
+                  00082a56    0000000d                   : interrupt.obj (.text:Interrupt_disableGlobal)
+                  00082a63    0000000d                   : interrupt.obj (.text:Interrupt_enableGlobal)
+                  00082a70    0000000d     mod.a : lib0.obj (.text:tvmgen_default_run)
+                  00082a7d    0000000b     driverlib.lib : sysctl.obj (.text:SysCtl_isMCDClockFailureDetected)
+                  00082a88    0000000a                   : interrupt.obj (.text:Interrupt_illegalOperationHandler)
+                  00082a92    0000000a                   : interrupt.obj (.text:Interrupt_nmiHandler)
+                  00082a9c    0000000a     mod.a : lib1.obj (.text:tvmgen_default_fused_tinie_c28_pack)
+                  00082aa6    0000000a           : lib1.obj (.text:tvmgen_default_fused_tinie_c28_unpack)
+                  00082ab0    00000009     board.obj (.text:Board_init)
+                  00082ab9    00000009     rts2800_fpu32_eabi.lib : _lock.c.obj (.text)
+                  00082ac2    00000008     f28p55x_codestartbranch.obj (.text)
+                  00082aca    00000007     driverlib.lib : sysctl.obj (.text:SysCtl_resetMCD)
+                  00082ad1    00000007     rts2800_fpu32_eabi.lib : memset.c.obj (.text)
+                  00082ad8    00000006     f28p55x_npu.obj (.text:NPU_enableInterrupt)
+                  00082ade    00000006     mod.a : tinie_c28.obj (.text:TINIE_start)
+                  00082ae4    00000006     rts2800_fpu32_eabi.lib : copy_zero_init.c.obj (.text:decompress:ZI)
+                  00082aea    00000005     f28p55x_npu.obj (.text:NPU_clearInterruptACK)
+                  00082aef    00000004     f28p55x_npu.obj (.text:NPU_getCtlReg)
+                  00082af3    00000003     board.obj (.text:NPU_init)
+                  00082af6    00000003     device.obj (.text:__error__)
+                  00082af9    00000002     rts2800_fpu32_eabi.lib : pre_init.c.obj (.text)
 
 MODULE SUMMARY
 
        Module                        code   ro data   rw data
        ------                        ----   -------   -------
     .\
-       hand_infer.obj                301    828       4494   
+       hand_infer.obj                342    828       4494   
        empty_driverlib_main.obj      341    0         82     
     +--+-----------------------------+------+---------+---------+
-       Total:                        642    828       4576   
+       Total:                        683    828       4576   
                                                              
     .\device\
        device.obj                    437    0         0      
@@ -311,22 +312,22 @@ MODULE SUMMARY
        Stack:                        0      0         512    
        Linker Generated:             0      4239      0      
     +--+-----------------------------+------+---------+---------+
-       Grand Total:                  6101   9277      6496   
+       Grand Total:                  6142   9277      6496   
 
 
 LINKER GENERATED COPY TABLES
 
-__TI_cinit_table @ 00083b54 records: 5, size/record: 4, table size: 20
-	ramgs1: load addr=00082ad8, load size=00001004 bytes, run addr=0000e000, run size=00001000 bytes, compression=copy
-	ramgs2: load addr=00083adc, load size=00000059 bytes, run addr=00010000, run size=00000080 bytes, compression=lzss
-	.data: load addr=00083b35, load size=00000010 bytes, run addr=0000a99c, run size=00000028 bytes, compression=lzss
-	.bss: load addr=00083b4c, load size=00000004 bytes, run addr=0000a800, run size=0000019c bytes, compression=zero_init
-	.bss.noinit.tvm: load addr=00083b50, load size=00000004 bytes, run addr=00012000, run size=00000520 bytes, compression=zero_init
+__TI_cinit_table @ 00083b7c records: 5, size/record: 4, table size: 20
+	ramgs1: load addr=00082b00, load size=00001004 bytes, run addr=0000e000, run size=00001000 bytes, compression=copy
+	ramgs2: load addr=00083b04, load size=00000059 bytes, run addr=00010000, run size=00000080 bytes, compression=lzss
+	.data: load addr=00083b5d, load size=00000010 bytes, run addr=0000a99c, run size=00000028 bytes, compression=lzss
+	.bss: load addr=00083b74, load size=00000004 bytes, run addr=0000a800, run size=0000019c bytes, compression=zero_init
+	.bss.noinit.tvm: load addr=00083b78, load size=00000004 bytes, run addr=00012000, run size=00000520 bytes, compression=zero_init
 
 
 LINKER GENERATED HANDLER TABLE
 
-__TI_handler_table @ 00083b46 records: 3, size/record: 2, table size: 6
+__TI_handler_table @ 00083b6e records: 3, size/record: 2, table size: 6
 	index: 0, handler: __TI_zero_init
 	index: 1, handler: __TI_decompress_lzss
 	index: 2, handler: __TI_decompress_none
@@ -366,90 +367,90 @@ GLOBAL SYMBOLS: SORTED ALPHABETICALLY BY Name
 
 page  address   name                                                                      
 ----  -------   ----                                                                      
-0     00082a86  Board_init                                                                
-0     000826d9  C$$EXIT                                                                   
+0     00082ab0  Board_init                                                                
+0     00082703  C$$EXIT                                                                   
 0     0008189f  Device_enableAllPeripherals                                               
 0     00081b31  Device_init                                                               
 0     0000a800  EMPTY_INS                                                                 
 0     00008000  Flash_initModule                                                          
 0     000817b4  GPIO_setAnalogMode                                                        
-0     00082133  GPIO_setPadConfig                                                         
-0     000824c3  GPIO_setPinConfig                                                         
-0     000824fa  GPIO_setQualificationMode                                                 
-0     00082955  Interrupt_defaultHandler                                                  
-0     00082185  Interrupt_disable                                                         
-0     00082531  Interrupt_enable                                                          
-0     00082a5e  Interrupt_illegalOperationHandler                                         
-0     00082486  Interrupt_initModule                                                      
-0     00082815  Interrupt_initVectorTable                                                 
-0     00082a68  Interrupt_nmiHandler                                                      
-0     00082ac0  NPU_clearInterruptACK                                                     
-0     00082aae  NPU_enableInterrupt                                                       
-0     00082ac5  NPU_getCtlReg                                                             
-0     00082ac9  NPU_init                                                                  
-0     0008221e  NPU_setInstrMem                                                           
-0     0008289b  NPU_setInterruptHandler                                                   
-0     00082268  NPU_setParamMem                                                           
-0     000823c7  PGA_setOffsetTrimNMOS                                                     
-0     00082383  PGA_setOffsetTrimPMOS                                                     
+0     0008215d  GPIO_setPadConfig                                                         
+0     000824ed  GPIO_setPinConfig                                                         
+0     00082524  GPIO_setQualificationMode                                                 
+0     0008297f  Interrupt_defaultHandler                                                  
+0     000821af  Interrupt_disable                                                         
+0     0008255b  Interrupt_enable                                                          
+0     00082a88  Interrupt_illegalOperationHandler                                         
+0     000824b0  Interrupt_initModule                                                      
+0     0008283f  Interrupt_initVectorTable                                                 
+0     00082a92  Interrupt_nmiHandler                                                      
+0     00082aea  NPU_clearInterruptACK                                                     
+0     00082ad8  NPU_enableInterrupt                                                       
+0     00082aef  NPU_getCtlReg                                                             
+0     00082af3  NPU_init                                                                  
+0     00082248  NPU_setInstrMem                                                           
+0     000828c5  NPU_setInterruptHandler                                                   
+0     00082292  NPU_setParamMem                                                           
+0     000823f1  PGA_setOffsetTrimNMOS                                                     
+0     000823ad  PGA_setOffsetTrimPMOS                                                     
 0     00080948  PWCONV_iB8_oB8_kB8_iCm8b16_oCm8_INS                                       
-0     00082796  PinMux_init                                                               
+0     000827c0  PinMux_init                                                               
 0     0008149d  RamfuncsLoadEnd                                                           
 abs   000000cd  RamfuncsLoadSize                                                          
 0     000813d0  RamfuncsLoadStart                                                         
 0     000080cd  RamfuncsRunEnd                                                            
 abs   000000cd  RamfuncsRunSize                                                           
 0     00008000  RamfuncsRunStart                                                          
-0     0008233e  SCI_clearInterruptStatus                                                  
-0     00081d88  SCI_init                                                                  
-0     00082448  SCI_setConfig                                                             
+0     00082368  SCI_clearInterruptStatus                                                  
+0     00081db1  SCI_init                                                                  
+0     00082472  SCI_setConfig                                                             
 0     000080c9  SysCtl_delay                                                              
-0     00081fab  SysCtl_getClock                                                           
-0     0008284f  SysCtl_getLowSpeedClock                                                   
+0     00081fd5  SysCtl_getClock                                                           
+0     00082879  SysCtl_getLowSpeedClock                                                   
 0     000815c3  SysCtl_isPLLValid                                                         
-0     000822b1  SysCtl_selectOscSource                                                    
-0     000822f8  SysCtl_selectXTAL                                                         
-0     0008274d  SysCtl_selectXTALSingleEnded                                              
+0     000822db  SysCtl_selectOscSource                                                    
+0     00082322  SysCtl_selectXTAL                                                         
+0     00082777  SysCtl_selectXTALSingleEnded                                              
 0     000814a0  SysCtl_setClock                                                           
-0     00082ac0  TINIE_clearInterruptACK                                                   
-0     0008289b  TINIE_registerInterrupt                                                   
-0     00082882  TINIE_setup                                                               
-0     00082ab4  TINIE_start                                                               
-0     00083b54  __TI_CINIT_Base                                                           
-0     00083b68  __TI_CINIT_Limit                                                          
-0     00083b68  __TI_CINIT_Warm                                                           
-0     00083b46  __TI_Handler_Table_Base                                                   
-0     00083b4c  __TI_Handler_Table_Limit                                                  
+0     00082aea  TINIE_clearInterruptACK                                                   
+0     000828c5  TINIE_registerInterrupt                                                   
+0     000828ac  TINIE_setup                                                               
+0     00082ade  TINIE_start                                                               
+0     00083b7c  __TI_CINIT_Base                                                           
+0     00083b90  __TI_CINIT_Limit                                                          
+0     00083b90  __TI_CINIT_Warm                                                           
+0     00083b6e  __TI_Handler_Table_Base                                                   
+0     00083b74  __TI_Handler_Table_Limit                                                  
 0     00000600  __TI_STACK_END                                                            
 abs   00000200  __TI_STACK_SIZE                                                           
-0     00082659  __TI_auto_init_nobinit_nopinit                                            
+0     00082683  __TI_auto_init_nobinit_nopinit                                            
 0     0000a9bc  __TI_cleanup_ptr                                                          
-0     000825d2  __TI_decompress_lzss                                                      
+0     000825fc  __TI_decompress_lzss                                                      
 0     00081178  __TI_decompress_none                                                      
 0     0000a9be  __TI_dtors_ptr                                                            
 0     0000a9ba  __TI_enable_exit_profile_output                                           
 abs   ffffffff  __TI_pprof_out_hndl                                                       
 abs   ffffffff  __TI_prof_data_size                                                       
 abs   ffffffff  __TI_prof_data_start                                                      
-0     00082aba  __TI_zero_init                                                            
-0     00081c04  __c28xabi_divf                                                            
+0     00082ae4  __TI_zero_init                                                            
+0     00081caa  __c28xabi_divf                                                            
 abs   ffffffff  __c_args__                                                                
-0     00082acc  __error__                                                                 
+0     00082af6  __error__                                                                 
 0     00000400  __stack                                                                   
-0     000829fa  _args_main                                                                
-0     00082928  _c_int00                                                                  
+0     00082a24  _args_main                                                                
+0     00082952  _c_int00                                                                  
 0     0000a9c0  _lock                                                                     
-0     00082a97  _nop                                                                      
-0     00082a93  _register_lock                                                            
-0     00082a8f  _register_unlock                                                          
-0     00082267  _system_post_cinit                                                        
-0     00082acf  _system_pre_init                                                          
+0     00082ac1  _nop                                                                      
+0     00082abd  _register_lock                                                            
+0     00082ab9  _register_unlock                                                          
+0     00081e99  _system_post_cinit                                                        
+0     00082af9  _system_pre_init                                                          
 0     0000a9c2  _unlock                                                                   
-0     000826d9  abort                                                                     
+0     00082703  abort                                                                     
 0     00080000  code_start                                                                
 0     0000a9ac  echoCount                                                                 
-0     000826db  exit                                                                      
-0     000820da  floorf                                                                    
+0     00082705  exit                                                                      
+0     00082104  floorf                                                                    
 0     0000a9b4  g_cyc_l0                                                                  
 0     0000a9b6  g_cyc_l1                                                                  
 0     0000a9b8  g_cyc_l2                                                                  
@@ -463,31 +464,31 @@ abs   ffffffff  __c_args__
 0     0000a9aa  g_us_cpu                                                                  
 0     0000a9a6  g_us_last                                                                 
 0     0000a9b2  g_y_cpu                                                                   
-0     00082010  hand_infer_one                                                            
-0     000821d3  hand_selftest                                                             
+0     0008203a  hand_infer_one                                                            
+0     000821fd  hand_selftest                                                             
 0     00081a5d  main                                                                      
-0     000827b9  memcpy                                                                    
-0     00082aa7  memset                                                                    
-0     00081d88  mySCI0_init                                                               
-0     00081f45  sinf                                                                      
+0     000827e3  memcpy                                                                    
+0     00082ad1  memset                                                                    
+0     00081db1  mySCI0_init                                                               
+0     00081f6f  sinf                                                                      
 0     0000a940  tinie_curr_layer                                                          
 0     0000a942  tinie_curr_sublayer                                                       
 0     0000a944  tinie_num_sublayers                                                       
-0     00082833  tinie_sublayer_IRQHandler                                                 
+0     0008285d  tinie_sublayer_IRQHandler                                                 
 0     0000a946  tinie_sublayer_postproc                                                   
 0     0000a94a  tinie_sublayers                                                           
-0     00082600  tvmgen_default_IRQHandler                                                 
-0     00082075  tvmgen_default_IRQHandlerHelper                                           
-0     00082684  tvmgen_default___tvm_main__                                               
+0     0008262a  tvmgen_default_IRQHandler                                                 
+0     0008209f  tvmgen_default_IRQHandlerHelper                                           
+0     000826ae  tvmgen_default___tvm_main__                                               
 0     0000a948  tvmgen_default_finished                                                   
-0     0008259e  tvmgen_default_fused_cast_add_cast_cast                                   
-0     000826af  tvmgen_default_fused_multiply_add_floor_clip_cast_reshape_cast            
+0     000825c8  tvmgen_default_fused_cast_add_cast_cast                                   
+0     000826d9  tvmgen_default_fused_multiply_add_floor_clip_cast_reshape_cast            
 0     0008197e  tvmgen_default_fused_nn_conv2d_add_multiply_right_shift_clip_cast         
-0     00081e70  tvmgen_default_fused_nn_conv2d_subtract_add_right_shift_clip_cast_multiply
-0     00082a72  tvmgen_default_fused_tinie_c28_pack                                       
-0     00082a7c  tvmgen_default_fused_tinie_c28_unpack                                     
-0     00082a46  tvmgen_default_run                                                        
-0     00081ede  tvmgen_default_ti_npu_convolve1x1NHWC_0                                   
+0     00081e9a  tvmgen_default_fused_nn_conv2d_subtract_add_right_shift_clip_cast_multiply
+0     00082a9c  tvmgen_default_fused_tinie_c28_pack                                       
+0     00082aa6  tvmgen_default_fused_tinie_c28_unpack                                     
+0     00082a70  tvmgen_default_run                                                        
+0     00081f08  tvmgen_default_ti_npu_convolve1x1NHWC_0                                   
 
 
 GLOBAL SYMBOLS: SORTED BY Symbol Address 
@@ -538,77 +539,77 @@ page  address   name
 0     0008197e  tvmgen_default_fused_nn_conv2d_add_multiply_right_shift_clip_cast         
 0     00081a5d  main                                                                      
 0     00081b31  Device_init                                                               
-0     00081c04  __c28xabi_divf                                                            
-0     00081d88  SCI_init                                                                  
-0     00081d88  mySCI0_init                                                               
-0     00081e70  tvmgen_default_fused_nn_conv2d_subtract_add_right_shift_clip_cast_multiply
-0     00081ede  tvmgen_default_ti_npu_convolve1x1NHWC_0                                   
-0     00081f45  sinf                                                                      
-0     00081fab  SysCtl_getClock                                                           
-0     00082010  hand_infer_one                                                            
-0     00082075  tvmgen_default_IRQHandlerHelper                                           
-0     000820da  floorf                                                                    
-0     00082133  GPIO_setPadConfig                                                         
-0     00082185  Interrupt_disable                                                         
-0     000821d3  hand_selftest                                                             
-0     0008221e  NPU_setInstrMem                                                           
-0     00082267  _system_post_cinit                                                        
-0     00082268  NPU_setParamMem                                                           
-0     000822b1  SysCtl_selectOscSource                                                    
-0     000822f8  SysCtl_selectXTAL                                                         
-0     0008233e  SCI_clearInterruptStatus                                                  
-0     00082383  PGA_setOffsetTrimPMOS                                                     
-0     000823c7  PGA_setOffsetTrimNMOS                                                     
-0     00082448  SCI_setConfig                                                             
-0     00082486  Interrupt_initModule                                                      
-0     000824c3  GPIO_setPinConfig                                                         
-0     000824fa  GPIO_setQualificationMode                                                 
-0     00082531  Interrupt_enable                                                          
-0     0008259e  tvmgen_default_fused_cast_add_cast_cast                                   
-0     000825d2  __TI_decompress_lzss                                                      
-0     00082600  tvmgen_default_IRQHandler                                                 
-0     00082659  __TI_auto_init_nobinit_nopinit                                            
-0     00082684  tvmgen_default___tvm_main__                                               
-0     000826af  tvmgen_default_fused_multiply_add_floor_clip_cast_reshape_cast            
-0     000826d9  C$$EXIT                                                                   
-0     000826d9  abort                                                                     
-0     000826db  exit                                                                      
-0     0008274d  SysCtl_selectXTALSingleEnded                                              
-0     00082796  PinMux_init                                                               
-0     000827b9  memcpy                                                                    
-0     00082815  Interrupt_initVectorTable                                                 
-0     00082833  tinie_sublayer_IRQHandler                                                 
-0     0008284f  SysCtl_getLowSpeedClock                                                   
-0     00082882  TINIE_setup                                                               
-0     0008289b  NPU_setInterruptHandler                                                   
-0     0008289b  TINIE_registerInterrupt                                                   
-0     00082928  _c_int00                                                                  
-0     00082955  Interrupt_defaultHandler                                                  
-0     000829fa  _args_main                                                                
-0     00082a46  tvmgen_default_run                                                        
-0     00082a5e  Interrupt_illegalOperationHandler                                         
-0     00082a68  Interrupt_nmiHandler                                                      
-0     00082a72  tvmgen_default_fused_tinie_c28_pack                                       
-0     00082a7c  tvmgen_default_fused_tinie_c28_unpack                                     
-0     00082a86  Board_init                                                                
-0     00082a8f  _register_unlock                                                          
-0     00082a93  _register_lock                                                            
-0     00082a97  _nop                                                                      
-0     00082aa7  memset                                                                    
-0     00082aae  NPU_enableInterrupt                                                       
-0     00082ab4  TINIE_start                                                               
-0     00082aba  __TI_zero_init                                                            
-0     00082ac0  NPU_clearInterruptACK                                                     
-0     00082ac0  TINIE_clearInterruptACK                                                   
-0     00082ac5  NPU_getCtlReg                                                             
-0     00082ac9  NPU_init                                                                  
-0     00082acc  __error__                                                                 
-0     00082acf  _system_pre_init                                                          
-0     00083b46  __TI_Handler_Table_Base                                                   
-0     00083b4c  __TI_Handler_Table_Limit                                                  
-0     00083b54  __TI_CINIT_Base                                                           
-0     00083b68  __TI_CINIT_Limit                                                          
-0     00083b68  __TI_CINIT_Warm                                                           
+0     00081caa  __c28xabi_divf                                                            
+0     00081db1  SCI_init                                                                  
+0     00081db1  mySCI0_init                                                               
+0     00081e99  _system_post_cinit                                                        
+0     00081e9a  tvmgen_default_fused_nn_conv2d_subtract_add_right_shift_clip_cast_multiply
+0     00081f08  tvmgen_default_ti_npu_convolve1x1NHWC_0                                   
+0     00081f6f  sinf                                                                      
+0     00081fd5  SysCtl_getClock                                                           
+0     0008203a  hand_infer_one                                                            
+0     0008209f  tvmgen_default_IRQHandlerHelper                                           
+0     00082104  floorf                                                                    
+0     0008215d  GPIO_setPadConfig                                                         
+0     000821af  Interrupt_disable                                                         
+0     000821fd  hand_selftest                                                             
+0     00082248  NPU_setInstrMem                                                           
+0     00082292  NPU_setParamMem                                                           
+0     000822db  SysCtl_selectOscSource                                                    
+0     00082322  SysCtl_selectXTAL                                                         
+0     00082368  SCI_clearInterruptStatus                                                  
+0     000823ad  PGA_setOffsetTrimPMOS                                                     
+0     000823f1  PGA_setOffsetTrimNMOS                                                     
+0     00082472  SCI_setConfig                                                             
+0     000824b0  Interrupt_initModule                                                      
+0     000824ed  GPIO_setPinConfig                                                         
+0     00082524  GPIO_setQualificationMode                                                 
+0     0008255b  Interrupt_enable                                                          
+0     000825c8  tvmgen_default_fused_cast_add_cast_cast                                   
+0     000825fc  __TI_decompress_lzss                                                      
+0     0008262a  tvmgen_default_IRQHandler                                                 
+0     00082683  __TI_auto_init_nobinit_nopinit                                            
+0     000826ae  tvmgen_default___tvm_main__                                               
+0     000826d9  tvmgen_default_fused_multiply_add_floor_clip_cast_reshape_cast            
+0     00082703  C$$EXIT                                                                   
+0     00082703  abort                                                                     
+0     00082705  exit                                                                      
+0     00082777  SysCtl_selectXTALSingleEnded                                              
+0     000827c0  PinMux_init                                                               
+0     000827e3  memcpy                                                                    
+0     0008283f  Interrupt_initVectorTable                                                 
+0     0008285d  tinie_sublayer_IRQHandler                                                 
+0     00082879  SysCtl_getLowSpeedClock                                                   
+0     000828ac  TINIE_setup                                                               
+0     000828c5  NPU_setInterruptHandler                                                   
+0     000828c5  TINIE_registerInterrupt                                                   
+0     00082952  _c_int00                                                                  
+0     0008297f  Interrupt_defaultHandler                                                  
+0     00082a24  _args_main                                                                
+0     00082a70  tvmgen_default_run                                                        
+0     00082a88  Interrupt_illegalOperationHandler                                         
+0     00082a92  Interrupt_nmiHandler                                                      
+0     00082a9c  tvmgen_default_fused_tinie_c28_pack                                       
+0     00082aa6  tvmgen_default_fused_tinie_c28_unpack                                     
+0     00082ab0  Board_init                                                                
+0     00082ab9  _register_unlock                                                          
+0     00082abd  _register_lock                                                            
+0     00082ac1  _nop                                                                      
+0     00082ad1  memset                                                                    
+0     00082ad8  NPU_enableInterrupt                                                       
+0     00082ade  TINIE_start                                                               
+0     00082ae4  __TI_zero_init                                                            
+0     00082aea  NPU_clearInterruptACK                                                     
+0     00082aea  TINIE_clearInterruptACK                                                   
+0     00082aef  NPU_getCtlReg                                                             
+0     00082af3  NPU_init                                                                  
+0     00082af6  __error__                                                                 
+0     00082af9  _system_pre_init                                                          
+0     00083b6e  __TI_Handler_Table_Base                                                   
+0     00083b74  __TI_Handler_Table_Limit                                                  
+0     00083b7c  __TI_CINIT_Base                                                           
+0     00083b90  __TI_CINIT_Limit                                                          
+0     00083b90  __TI_CINIT_Warm                                                           
 abs   000000cd  RamfuncsLoadSize                                                          
 abs   000000cd  RamfuncsRunSize                                                           
 abs   00000200  __TI_STACK_SIZE                                                           
