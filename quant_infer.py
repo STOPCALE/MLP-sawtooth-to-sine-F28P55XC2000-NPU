@@ -65,12 +65,19 @@ def quant_layer(q_in, W_q, S_w, b_int, S_in, z_in, S_out, z_out):
 
     return q_out, h
 
+def quant_layer_pic(q_in, W_q, S_w, b_int, S_in, z_in, S_out, z_out):
+    acc = (q_in - int(z_in)) @ W_q.astype(np.int32).T + b_int
+    M = S_in * S_w / S_out #这是在干什么？相当于是自建变量？
+    q_out = np.clip(np.round(acc * M).astype(np.int32) + int(z_out), -128,127)
+    h = S_out * (q_out - int(z_out))
+
+    return q_out, h
 
 s  = 0.5
 q0 = np.array([round(float(s / S_in))],dtype=np.int32)
-q1, h1=quant_layer(q0, q_w0, S_w0, b0_int, float(S_in), int(zp), float(S_out0), float(z_out0))
-q2, h2=quant_layer(q1, W_q2, S_w2, b2_int, float(S_in2), int(z_in2), float(S_out2), float(z_out2))
-q3, h3 = quant_layer(q2, W_q3, S_w3, b3_int, S_in=float(S_in3), z_in=int(z_in3), S_out=float(S_out3), z_out=int(z_out3))
+q1, h1=quant_layer_pic(q0, q_w0, S_w0, b0_int, float(S_in), int(zp), float(S_out0), int(z_out0))
+q2, h2=quant_layer_pic(q1, W_q2, S_w2, b2_int, float(S_in2), int(z_in2), float(S_out2), int(z_out2))
+q3, h3 = quant_layer_pic(q2, W_q3, S_w3, b3_int, float(S_in3), int(z_in3),float(S_out3), int(z_out3))
 
 
 print(q0)
@@ -99,3 +106,19 @@ sess = ort.InferenceSession(m2.SerializeToString(), providers=["CPUExecutionProv
 y = float(S_out3) * (q3 - int(z_out3))
 y_ort = sess.run(["y"], {"s": np.array([[0.5]], dtype=np.float32)})[0]
 print(y_ort, y)   # y = S_out*(q3 - z_out) 的最后一个值
+
+s_batch = np.linspace(-1, 1, 1000, dtype=np.float32).reshape(-1, 1) #(1000,1)的范围？
+
+q0b = np.round(s_batch / S_in).astype(np.int32) + int(zp)
+q1b, h1=quant_layer_pic(q0b, q_w0, S_w0, b0_int, float(S_in), int(zp), float(S_out0), float(z_out0))
+q2b, h2=quant_layer_pic(q1b, W_q2, S_w2, b2_int, float(S_in2), int(z_in2), float(S_out2), float(z_out2))
+q3, h3 = quant_layer_pic(q2b, W_q3, S_w3, b3_int, float(S_in3), int(z_in3),float(S_out3), int(z_out3))
+
+yb = float(S_out3) * (q3 - int(z_out3))
+
+y_ort_b = sess.run(["y"], {"s": s_batch})[0]                          # (1000,1)
+print("batch y max diff =", np.abs(yb - y_ort_b).max())
+
+q1_ort = sess.run([vi.name], {"s": s_batch})[0]          # (1000,64), vi = Relu_output_0 那个
+print("q1 batch max diff =", np.abs(q1_ort.astype(np.int64) - q1b).max())
+

@@ -60,6 +60,7 @@
 |---|---|---|
 | `quant_infer.py` | **用户手写**：从 `saw2sin_int8.onnx` 读 int8 权重/scale，三层整数前向 + 对拍 | 2026-10-07 打通，见 [05](05_手写int8推理实战.md) |
 | `inspect_qat.py` | 只读诊断工具：dump `.pt` / `.onnx` 量化参数（含 fbgemm `_packed_params` 解包） | 产物 `inspect_qat.txt` |
+| `batch_bench.py` | 诊断工具：1000 点全量精度体检（float vs int8 vs 解析目标）+ 导出金标准 | `golden_vectors.npz`、`batch_bench.png` |
 
 ### 历史实验脚本
 
@@ -94,6 +95,7 @@
 - [ ] F28P55X 上板部署：跑通官方工具链，记录实测误差
 - [x] 手写前向推理（路线 B，PC/Python 版）：2026-10-07 完成，与 onnxruntime 逐位一致（见 [05](05_手写int8推理实战.md)）
 - [ ] 手写前向推理（C 版）：把 `quant_infer.py` 的逻辑改写成 C，PC 上编译对拍 → 再考虑上板
-- [ ] 第 2 层中间张量直接对拍 + 批量 1000 点整体对拍（误差曲线）
+- [x] 批量 1000 点整体对拍：`q1` max diff = **0**（64000 个整数逐个相同），`y` max diff = 3e-8；金标准已导出 `golden_vectors.npz`
+- [ ] 第 2 层中间张量直接对拍（单点，1 分钟，可选）
 - [ ] fake-vs-real gap 的深入定位（可选进阶）
 - [ ] 精度改进实验（若 4e-2 不可接受：混合精度 / 更好标定 / int16）
