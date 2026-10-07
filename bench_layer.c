@@ -84,6 +84,21 @@ static void layer_v3(const qlayer_t *L, const layer_rt_t *rt,
     }
 }
 
+/* ---------------- v4: v3 + z_in folded into bias ---------------- */
+static void layer_v4(const qlayer_t *L, const layer_rt_t *rt,
+                     const int8_t *x, int8_t *q_out)
+{
+    for (int o = 0; o < L->out_dim; o++) {
+        int32_t acc = L->b_fold[o];                                        /* folded bias */
+        for (int i = 0; i < L->in_dim; i++)
+            acc += (int32_t)x[i] * (int32_t)L->W_q[o * L->in_dim + i];     /* no (x - z_in) */
+        int32_t r = round_nearest_even(acc * rt->M[o]) + L->z_out;
+        if (r < -128) r = -128;
+        if (r >  127) r =  127;
+        q_out[o] = (int8_t)r;
+    }
+}
+
 static double bench_v1(const qlayer_t *L, long long *cks)
 {
     int8_t x[64], y[64];
@@ -132,6 +147,22 @@ static double bench_v3(const qlayer_t *L, const layer_rt_t *rt, long long *cks)
     return (double)(t1 - t0) * 1e6 / CLOCKS_PER_SEC / REPS;
 }
 
+static double bench_v4(const qlayer_t *L, const layer_rt_t *rt, long long *cks)
+{
+    int8_t x[64], y[64];
+    long long c = 0;
+    for (int i = 0; i < 64; i++) x[i] = (int8_t)(i - 32);
+    clock_t t0 = clock();
+    for (int rep = 0; rep < REPS; rep++) {
+        x[0] = (int8_t)(rep & 0x7f);
+        layer_v4(L, rt, x, y);
+        for (int i = 0; i < L->out_dim; i++) c += y[i];
+    }
+    clock_t t1 = clock();
+    *cks = c;
+    return (double)(t1 - t0) * 1e6 / CLOCKS_PER_SEC / REPS;
+}
+
 int main(void)
 {
     layer_rt_t rt[3];
@@ -139,18 +170,19 @@ int main(void)
 
     printf("REPS = %d | clock() resolution = %d Hz\n", REPS, (int)CLOCKS_PER_SEC);
     printf("--------------------------------------------------------------------------------------\n");
-    printf("%-24s %10s %10s %10s     %s\n",
-           "layer", "v1(us)", "v2(us)", "v3(us)", "speedup v1->v3 / checksums");
+    printf("%-21s %9s %9s %9s %9s     %-9s %s\n",
+           "layer", "v1(us)", "v2(us)", "v3(us)", "v4(us)", "v1->v4", "checksums");
     for (int l = 0; l < 3; l++) {
         const qlayer_t *L = &LAYERS[l];
-        long long c1 = 0, c2 = 0, c3 = 0;
+        long long c1 = 0, c2 = 0, c3 = 0, c4 = 0;
         double a = bench_v1(L, &c1);
         double b = bench_v2(L, &rt[l], &c2);
         double d = bench_v3(L, &rt[l], &c3);
-        printf("L%d (%2d->%2d, %4d MAC)   %10.4f %10.4f %10.4f     %5.2fx   [%s]\n",
+        double e = bench_v4(L, &rt[l], &c4);
+        printf("L%d (%2d->%2d,%4d MAC) %9.4f %9.4f %9.4f %9.4f     %5.2fx    [%s]\n",
                l, L->in_dim, L->out_dim, L->in_dim * L->out_dim,
-               a, b, d, a / d,
-               (c1 == c2 && c2 == c3) ? "all identical" : "MISMATCH!");
+               a, b, d, e, a / e,
+               (c1 == c2 && c2 == c3 && c3 == c4) ? "all identical" : "MISMATCH!");
     }
     return 0;
 }

@@ -77,7 +77,12 @@ for tag, w, s_in_name, z_in_name, s_out_name, z_out_name in LAYER_DEFS:
     z_in = int(P[z_in_name])
     s_out = float(P[s_out_name])
     z_out = int(P[z_out_name])
-    layers.append(dict(tag=tag, w=w, W=W, S_w=S_w, b=b,
+    # B2: 把 z_in 折叠进 bias.  acc = sum W*(x - z_in) + b
+    #                                = sum W*x + (b - z_in*rowsum(W)) = sum W*x + b'
+    rowsum = W.astype(np.int64).sum(axis=1)                   # (out,) = sum_i W_q[o][i]
+    b_fold = b.astype(np.int64) - z_in * rowsum               # int64 中介, 防溢出
+    assert b_fold.min() >= -2**31 and b_fold.max() < 2**31, "b' overflows int32!"
+    layers.append(dict(tag=tag, w=w, W=W, S_w=S_w, b=b, bf=b_fold.astype(np.int32),
                        s_in=s_in, z_in=z_in, s_out=s_out, z_out=z_out))
 
 # ---------------- quant_params.h ----------------
@@ -93,6 +98,7 @@ lines.append("typedef struct {")
 lines.append("    const int8_t  *W_q;      /* [out_dim * in_dim], 行主序: 行=输出通道      */")
 lines.append("    const float   *S_w;      /* [out_dim], 每输出通道一把尺子              */")
 lines.append("    const int32_t *b_int;    /* [out_dim], 已吸收 (b / (S_in*S_w))         */")
+lines.append("    const int32_t *b_fold;   /* [out_dim], b_int - z_in*rowsum(W_q): 内层循环不再需要减 z_in */")
 lines.append("    double   S_in,  S_out;   /* 输入/输出激活尺子                          */")
 lines.append("    int32_t  z_in,  z_out;   /* 输入/输出 zero_point                       */")
 lines.append("    int      in_dim, out_dim;")
@@ -112,15 +118,19 @@ for L in layers:
     lines.append("static const int32_t %s_B[%d] = {" % (tag, L["b"].size))
     lines.append(fmt_ints(L["b"], per_line=8))
     lines.append("};")
+    lines.append("static const int32_t %s_BF[%d] = {   /* folded: b_int - z_in*rowsum(W_q) */"
+                 % (tag, L["bf"].size))
+    lines.append(fmt_ints(L["bf"], per_line=8))
+    lines.append("};")
     lines.append("")
 
 lines.append("/* ---------- 三层参数表 (推理时按顺序调用) ---------- */")
 lines.append("static const qlayer_t LAYERS[3] = {")
 for L in layers:
     # S_in/S_out 存为 double -> 必须 %.17g 才能精确往返 (%.9g 只够 float32)
-    lines.append("    { %s_W, %s_SW, %s_B, "
+    lines.append("    { %s_W, %s_SW, %s_B, %s_BF, "
                  "%.17g, %.17g, %d, %d, %d, %d },"
-                 % (L["tag"], L["tag"], L["tag"],
+                 % (L["tag"], L["tag"], L["tag"], L["tag"],
                     L["s_in"], L["s_out"], L["z_in"], L["z_out"],
                     L["W"].shape[1], L["W"].shape[0]))
 lines.append("};")
@@ -190,3 +200,9 @@ for L in layers:
     print("  %s %-8s %2d -> %2d   W=%4d  S_w=%3d  S_in=%.9g z_in=%4d  S_out=%.9g z_out=%4d"
           % (L["tag"], L["w"], L["W"].shape[1], L["W"].shape[0], L["W"].size,
              L["S_w"].size, L["s_in"], L["z_in"], L["s_out"], L["z_out"]))
+print()
+print("b vs b' (folded) range check -- must fit in int32 (limit 2147483647):")
+for L in layers:
+    print("  %s  b in [%9d, %9d]   b' in [%9d, %9d]"
+          % (L["tag"], int(L["b"].min()), int(L["b"].max()),
+             int(L["bf"].min()), int(L["bf"].max())))
